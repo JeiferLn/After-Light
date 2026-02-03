@@ -7,6 +7,11 @@ public class PlayerController : MonoBehaviour
     // ---------- COMPONENTS ----------
     private CharacterController2D controller;
 
+    // ---------- REFERENCES ----------
+    [Header("References")]
+    [SerializeField]
+    private CameraLookDirection cameraLookDirection;
+
     // ---------- MOVEMENT ----------
     [Header("Movement")]
     [SerializeField]
@@ -80,6 +85,9 @@ public class PlayerController : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Sign(moveDirection.x) * Mathf.Abs(scale.x);
         transform.localScale = scale;
+
+        if (cameraLookDirection != null)
+            cameraLookDirection.LookDirection(scale.x > 0);
     }
 
     // ---------- CLIMB ----------
