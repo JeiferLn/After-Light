@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private float moveSpeed = 6f;
 
     [SerializeField]
-    private float gravity = -30f;
+    private float gravity = -20f;
 
     // ---------- OBSTACLE DETECTION ----------
     [Header("Obstacle Detection")]
@@ -100,40 +100,85 @@ public class PlayerController : MonoBehaviour
         if (obstacle == null)
             return;
 
-        StartCoroutine(ClimbObstacle(obstacle));
+        StartCoroutine(ExecuteClimb(obstacle));
     }
 
-    // ---------- CLIMB COROUTINE ----------
-    private IEnumerator ClimbObstacle(ClimbableObstacle obstacle)
+    // ---------- CLIMB LOGIC ----------
+    private IEnumerator ExecuteClimb(ClimbableObstacle obstacle)
     {
         currentState = PlayerState.Climbing;
         velocity = Vector3.zero;
 
-        if (obstacle.startPoint != null)
-            yield return MoveToPosition(obstacle.startPoint.position);
+        if (obstacle.alignPoint != null)
+        {
+            Vector3 targetX = new Vector3(
+                obstacle.alignPoint.position.x,
+                transform.position.y,
+                transform.position.z
+            );
 
-        if (obstacle.endPoint != null)
-            yield return MoveToPosition(obstacle.endPoint.position);
+            yield return MoveTo(targetX);
+        }
+
+        if (obstacle.exitPoint != null)
+        {
+            Vector3 targetY = new Vector3(
+                transform.position.x,
+                obstacle.exitPoint.position.y,
+                transform.position.z
+            );
+
+            yield return MoveTo(targetY);
+        }
+
+        float forwardOffset = 0.6f + Mathf.Sign(transform.localScale.x);
+        Vector3 forwardTarget = transform.position + Vector3.right * forwardOffset;
+        yield return MoveTo(forwardTarget);
+
+        yield return EnsureGrounded();
 
         currentState = PlayerState.Idle;
     }
 
-    // ---------- MOVE TO POSITION ----------
-    private IEnumerator MoveToPosition(Vector3 target)
+    // ---------- MOVEMENT HELPERS ----------
+    private IEnumerator MoveTo(Vector3 target)
     {
-        float duration = 0.35f;
+        float duration = 0.25f;
         float elapsed = 0f;
         Vector3 start = transform.position;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-
-            Vector3 pos = Vector3.Lerp(start, target, t);
-            controller.move(pos - transform.position);
-
+            Vector3 next = Vector3.Lerp(start, target, elapsed / duration);
+            controller.move(next - transform.position);
             yield return null;
         }
+    }
+
+    private IEnumerator EnsureGrounded()
+    {
+        while (!controller.isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+            controller.move(velocity * Time.deltaTime);
+            yield return null;
+        }
+
+        velocity.y = 0;
+    }
+
+    // ---------- DEBUG ----------
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        Gizmos.color = Color.yellow;
+
+        Vector2 direction = Vector2.right * Mathf.Sign(transform.localScale.x);
+        Vector2 origin = transform.position;
+
+        Gizmos.DrawLine(origin, origin + direction * frontCheckDistance);
     }
 }
