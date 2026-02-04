@@ -2,9 +2,15 @@ using UnityEngine;
 
 public class ClimbableObstacle : MonoBehaviour
 {
-    public Transform alignPoint; // Donde se alinea antes de escalar
-    public Transform topPoint; // Punto superior
-    public Transform exitPoint; // Salida al escalar
-    public Transform hangPoint; // Donde queda colgado
-    public Transform dropPoint; // Donde cae al bajar
+    public TraversalType traversalType;
+
+    [Header("Traversal Points")]
+    public Transform alignPoint;
+    public Transform topPoint;
+    public Transform exitPoint;
+    public Transform hangPoint;
+    public Transform dropPoint;
+
+    [Header("Traversal Settings")]
+    public float traversalDuration = 0.4f;
 }

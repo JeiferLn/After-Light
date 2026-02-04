@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public bool CanMove => movementController != null && movementController.CanMove;
 
     // ---------- UNITY ----------
-    private void Awake()
+    private void Start()
     {
         movementController = GetComponent<PlayerMovementController>();
         climbController = GetComponent<PlayerClimbAndDropController>();

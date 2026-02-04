@@ -2,6 +2,7 @@ using System.Collections;
 using Prime31;
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController2D))]
 public class PlayerMovementController : MonoBehaviour
 {
     // ---------- COMPONENTS ----------
@@ -58,7 +59,15 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController2D>();
-        originalGravityScale = controller.rigidBody2D.gravityScale;
+        if (controller == null)
+        {
+            enabled = false;
+            return;
+        }
+
+        // Prime31 CharacterController2D expone rigidBody2D; puede no estar lista si algo falla en su Awake.
+        originalGravityScale =
+            controller.rigidBody2D != null ? controller.rigidBody2D.gravityScale : 1f;
     }
 
     private void Update()

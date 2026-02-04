@@ -3,6 +3,7 @@ using Prime31;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMovementController))]
+[RequireComponent(typeof(CharacterController2D))]
 public class PlayerClimbAndDropController : MonoBehaviour
 {
     // ---------- COMPONENTS ----------
@@ -17,11 +18,6 @@ public class PlayerClimbAndDropController : MonoBehaviour
     [SerializeField]
     private LayerMask obstacleLayer;
 
-    // ---------- CLIMB SETTINGS ----------
-    [Header("Climb Settings")]
-    [SerializeField]
-    private float durationClimbAndDrop = 0.5f;
-
     // ---------- STATE ----------
     private ClimbableObstacle currentObstacle;
     private bool canMakeHangDecision;
@@ -30,12 +26,20 @@ public class PlayerClimbAndDropController : MonoBehaviour
     private void Awake()
     {
         movement = GetComponent<PlayerMovementController>();
-        controller = movement.Controller;
+        controller = GetComponent<CharacterController2D>();
+
+        if (movement == null || controller == null)
+        {
+            enabled = false;
+        }
     }
 
     // ---------- CLIMB ----------
     public void TryClimb()
     {
+        if (movement == null || controller == null)
+            return;
+
         if (!movement.CanMove)
             return;
 
@@ -57,6 +61,8 @@ public class PlayerClimbAndDropController : MonoBehaviour
     // ---------- CLIMB LOGIC ----------
     private IEnumerator ExecuteClimb(ClimbableObstacle obstacle)
     {
+        currentObstacle = obstacle;
+
         movement.IsExternallyMoving = true;
         movement.CurrentState = PlayerState.Climbing;
         movement.Velocity = Vector3.zero;
@@ -141,7 +147,6 @@ public class PlayerClimbAndDropController : MonoBehaviour
         if (obstacle == null || obstacle.hangPoint == null)
             return;
 
-        currentObstacle = obstacle;
         StartCoroutine(ExecuteHang(obstacle));
     }
 
@@ -164,17 +169,13 @@ public class PlayerClimbAndDropController : MonoBehaviour
     // ---------- DROP DOWN HELPER ----------
     private IEnumerator ExecuteHang(ClimbableObstacle obstacle)
     {
+        currentObstacle = obstacle;
+
         movement.IsExternallyMoving = true;
         canMakeHangDecision = false;
         movement.CurrentState = PlayerState.Hanging;
 
         movement.Velocity = Vector3.zero;
-
-        transform.localScale = new Vector3(
-            -transform.localScale.x,
-            transform.localScale.y,
-            transform.localScale.z
-        );
 
         controller.rigidBody2D.gravityScale = 0f;
         controller.rigidBody2D.linearVelocity = Vector2.zero;
@@ -243,17 +244,21 @@ public class PlayerClimbAndDropController : MonoBehaviour
     // ---------- MOVEMENT HELPERS ----------
     private IEnumerator MoveTo(Vector3 target)
     {
-        float duration = durationClimbAndDrop;
+        float duration = currentObstacle.traversalDuration;
         float elapsed = 0f;
+
         Vector3 start = transform.position;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            transform.position = Vector3.Lerp(start, target, elapsed / duration);
+
+            Vector3 next = Vector3.Lerp(start, target, elapsed / duration);
+            Vector3 delta = next - transform.position;
+
+            controller.move(delta);
+
             yield return null;
         }
-
-        transform.position = target;
     }
 }
