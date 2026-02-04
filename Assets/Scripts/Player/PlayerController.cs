@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     private bool isExternallyMoving;
 
     // ---------- UNITY ----------
-    private void Awake()
+    private void Start()
     {
         controller = GetComponent<CharacterController2D>();
         originalGravityScale = controller.rigidBody2D.gravityScale;
