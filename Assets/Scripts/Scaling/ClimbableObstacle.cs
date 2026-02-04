@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class ClimbableObstacle : MonoBehaviour
 {
-    public Transform alignPoint; // Donde se pega el player
-    public Transform topPoint; // Punto alto
-    public Transform exitPoint; // Punto de salida
-    public Transform hangPoint; // Para colgarse (bajar)
+    public Transform alignPoint; // Donde se alinea antes de escalar
+    public Transform topPoint; // Punto superior
+    public Transform exitPoint; // Salida al escalar
+    public Transform hangPoint; // Donde queda colgado
+    public Transform dropPoint; // Donde cae al bajar
 }

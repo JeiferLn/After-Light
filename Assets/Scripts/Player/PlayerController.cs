@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     // ---------- OBSTACLE DETECTION ----------
     [Header("Obstacle Detection")]
     [SerializeField]
-    private float frontCheckDistance = 0.6f;
+    private float checkDistance = 0.6f;
 
     [SerializeField]
     private LayerMask obstacleLayer;
@@ -35,14 +35,23 @@ public class PlayerController : MonoBehaviour
 
     public bool CanMove => currentState == PlayerState.Idle || currentState == PlayerState.Walking;
 
+    private ClimbableObstacle currentObstacle;
+
+    private float originalGravityScale;
+    private bool canMakeHangDecision;
+
     // ---------- UNITY ----------
     private void Awake()
     {
         controller = GetComponent<CharacterController2D>();
+        originalGravityScale = controller.rigidBody2D.gravityScale;
     }
 
     private void Update()
     {
+        if (currentState == PlayerState.Hanging)
+            return;
+
         HandleMovement();
         HandleFlip();
     }
@@ -99,7 +108,7 @@ public class PlayerController : MonoBehaviour
         Vector2 direction = Vector2.right * Mathf.Sign(transform.localScale.x);
         Vector2 origin = transform.position + Vector3.up * controller.skinWidth;
 
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, frontCheckDistance, obstacleLayer);
+        RaycastHit2D hit = Physics2D.Raycast(origin, direction, checkDistance, obstacleLayer);
 
         if (!hit)
             return;
@@ -148,6 +157,116 @@ public class PlayerController : MonoBehaviour
         currentState = PlayerState.Idle;
     }
 
+    // ---------- DROP DOWN LOGIC ----------
+    public void TryDrop()
+    {
+        if (currentState != PlayerState.Idle && currentState != PlayerState.Walking)
+            return;
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            transform.position,
+            Vector2.down,
+            checkDistance,
+            obstacleLayer
+        );
+
+        if (!hit)
+            return;
+
+        ClimbableObstacle obstacle = hit.collider.GetComponent<ClimbableObstacle>();
+        if (obstacle == null || obstacle.hangPoint == null)
+            return;
+
+        currentObstacle = obstacle;
+        StartCoroutine(ExecuteHang(obstacle));
+    }
+
+    public void HangClimbUp()
+    {
+        if (currentState != PlayerState.Hanging || !canMakeHangDecision)
+            return;
+        StartCoroutine(ClimbBackUp(currentObstacle));
+    }
+
+    public void HangDropDown()
+    {
+        if (currentState != PlayerState.Hanging || !canMakeHangDecision)
+            return;
+        StartCoroutine(DropDown(currentObstacle));
+    }
+
+    // ---------- DROP DOWN HELPER ----------
+    private IEnumerator ExecuteHang(ClimbableObstacle obstacle)
+    {
+        canMakeHangDecision = false;
+        currentState = PlayerState.Hanging;
+
+        velocity = Vector3.zero;
+        transform.localScale = new Vector3(
+            -transform.localScale.x,
+            transform.localScale.y,
+            transform.localScale.z
+        );
+
+        controller.rigidBody2D.gravityScale = 0f;
+        controller.rigidBody2D.linearVelocity = Vector2.zero;
+
+        Vector3 targetX = new Vector3(
+            obstacle.hangPoint.position.x,
+            transform.position.y,
+            transform.position.z
+        );
+        yield return MoveTo(targetX);
+
+        Vector3 TargetY = new Vector3(
+            transform.position.x,
+            obstacle.hangPoint.position.y,
+            transform.position.z
+        );
+        yield return MoveTo(TargetY);
+
+        canMakeHangDecision = true;
+    }
+
+    private IEnumerator DropDown(ClimbableObstacle obstacle)
+    {
+        canMakeHangDecision = false;
+        currentState = PlayerState.Droping;
+        controller.rigidBody2D.gravityScale = originalGravityScale;
+
+        if (obstacle.dropPoint != null)
+            yield return MoveTo(obstacle.dropPoint.position);
+
+        yield return EnsureGrounded();
+
+        currentState = PlayerState.Idle;
+    }
+
+    private IEnumerator ClimbBackUp(ClimbableObstacle obstacle)
+    {
+        canMakeHangDecision = false;
+        currentState = PlayerState.Climbing;
+        controller.rigidBody2D.gravityScale = originalGravityScale;
+
+        if (obstacle.topPoint != null)
+        {
+            Vector3 TargetY = new Vector3(
+                transform.position.x,
+                obstacle.topPoint.position.y,
+                transform.position.z
+            );
+            yield return MoveTo(TargetY);
+
+            Vector3 TargetX = new Vector3(
+                obstacle.topPoint.position.x,
+                transform.position.y,
+                transform.position.z
+            );
+            yield return MoveTo(TargetX);
+        }
+        currentState = PlayerState.Idle;
+    }
+
     // ---------- MOVEMENT HELPERS ----------
     private IEnumerator MoveTo(Vector3 target)
     {
@@ -187,6 +306,6 @@ public class PlayerController : MonoBehaviour
         Vector2 direction = Vector2.right * Mathf.Sign(transform.localScale.x);
         Vector2 origin = transform.position;
 
-        Gizmos.DrawLine(origin, origin + direction * frontCheckDistance);
+        Gizmos.DrawLine(origin, origin + direction * checkDistance);
     }
 }

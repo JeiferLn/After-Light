@@ -27,4 +27,24 @@ public class PlayerInputSystem : MonoBehaviour
             return;
         playerController.TryClimb();
     }
+
+    public void InputDrop(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed)
+            return;
+
+        playerController.TryDrop();
+    }
+
+    public void InputHangDecision(InputAction.CallbackContext ctx)
+    {
+        if (!ctx.performed)
+            return;
+
+        bool isClimbUp = ctx.control != null && ctx.control.name.ToLower().Contains("w");
+        if (isClimbUp)
+            playerController.HangClimbUp();
+        else
+            playerController.HangDropDown();
+    }
 }

@@ -5,7 +5,8 @@ public enum PlayerState
     Crunching,
     Interacting,
     Climbing,
-    Dropping,
+    Hanging,
+    Droping,
     Blocked,
     Dead,
 }
