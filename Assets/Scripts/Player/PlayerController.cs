@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
     private float originalGravityScale;
     private bool canMakeHangDecision;
 
+    private bool isExternallyMoving;
+
     // ---------- UNITY ----------
     private void Awake()
     {
@@ -52,8 +54,15 @@ public class PlayerController : MonoBehaviour
         if (currentState == PlayerState.Hanging)
             return;
 
-        HandleMovement();
         HandleFlip();
+    }
+
+    private void FixedUpdate()
+    {
+        if (isExternallyMoving)
+            return;
+
+        HandleMovement();
     }
 
     // ---------- INPUT ----------
@@ -80,10 +89,10 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            velocity.y += gravity * Time.deltaTime;
+            velocity.y += gravity * Time.fixedDeltaTime;
         }
 
-        controller.move(velocity * Time.deltaTime);
+        controller.move(velocity * Time.fixedDeltaTime);
     }
 
     private void HandleFlip()
@@ -123,8 +132,11 @@ public class PlayerController : MonoBehaviour
     // ---------- CLIMB LOGIC ----------
     private IEnumerator ExecuteClimb(ClimbableObstacle obstacle)
     {
+        isExternallyMoving = true;
         currentState = PlayerState.Climbing;
         velocity = Vector3.zero;
+
+        controller.rigidBody2D.gravityScale = 0f;
 
         if (obstacle.alignPoint != null)
         {
@@ -148,13 +160,16 @@ public class PlayerController : MonoBehaviour
             yield return MoveTo(targetY);
         }
 
-        float forwardOffset = 0.6f + Mathf.Sign(transform.localScale.x);
+        float forwardOffset = 0.6f * Mathf.Sign(transform.localScale.x);
         Vector3 forwardTarget = transform.position + Vector3.right * forwardOffset;
         yield return MoveTo(forwardTarget);
+
+        controller.rigidBody2D.gravityScale = originalGravityScale;
 
         yield return EnsureGrounded();
 
         currentState = PlayerState.Idle;
+        isExternallyMoving = false;
     }
 
     // ---------- DROP DOWN LOGIC ----------
@@ -185,6 +200,7 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState != PlayerState.Hanging || !canMakeHangDecision)
             return;
+
         StartCoroutine(ClimbBackUp(currentObstacle));
     }
 
@@ -192,16 +208,19 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState != PlayerState.Hanging || !canMakeHangDecision)
             return;
+
         StartCoroutine(DropDown(currentObstacle));
     }
 
     // ---------- DROP DOWN HELPER ----------
     private IEnumerator ExecuteHang(ClimbableObstacle obstacle)
     {
+        isExternallyMoving = true;
         canMakeHangDecision = false;
         currentState = PlayerState.Hanging;
 
         velocity = Vector3.zero;
+
         transform.localScale = new Vector3(
             -transform.localScale.x,
             transform.localScale.y,
@@ -218,12 +237,12 @@ public class PlayerController : MonoBehaviour
         );
         yield return MoveTo(targetX);
 
-        Vector3 TargetY = new Vector3(
+        Vector3 targetY = new Vector3(
             transform.position.x,
             obstacle.hangPoint.position.y,
             transform.position.z
         );
-        yield return MoveTo(TargetY);
+        yield return MoveTo(targetY);
 
         canMakeHangDecision = true;
     }
@@ -232,7 +251,9 @@ public class PlayerController : MonoBehaviour
     {
         canMakeHangDecision = false;
         currentState = PlayerState.Droping;
+
         controller.rigidBody2D.gravityScale = originalGravityScale;
+        isExternallyMoving = false;
 
         if (obstacle.dropPoint != null)
             yield return MoveTo(obstacle.dropPoint.position);
@@ -246,24 +267,27 @@ public class PlayerController : MonoBehaviour
     {
         canMakeHangDecision = false;
         currentState = PlayerState.Climbing;
+
         controller.rigidBody2D.gravityScale = originalGravityScale;
 
         if (obstacle.topPoint != null)
         {
-            Vector3 TargetY = new Vector3(
+            Vector3 targetY = new Vector3(
                 transform.position.x,
                 obstacle.topPoint.position.y,
                 transform.position.z
             );
-            yield return MoveTo(TargetY);
+            yield return MoveTo(targetY);
 
-            Vector3 TargetX = new Vector3(
+            Vector3 targetX = new Vector3(
                 obstacle.topPoint.position.x,
                 transform.position.y,
                 transform.position.z
             );
-            yield return MoveTo(TargetX);
+            yield return MoveTo(targetX);
         }
+
+        isExternallyMoving = false;
         currentState = PlayerState.Idle;
     }
 
@@ -277,19 +301,20 @@ public class PlayerController : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            Vector3 next = Vector3.Lerp(start, target, elapsed / duration);
-            controller.move(next - transform.position);
+            transform.position = Vector3.Lerp(start, target, elapsed / duration);
             yield return null;
         }
+
+        transform.position = target;
     }
 
     private IEnumerator EnsureGrounded()
     {
         while (!controller.isGrounded)
         {
-            velocity.y += gravity * Time.deltaTime;
-            controller.move(velocity * Time.deltaTime);
-            yield return null;
+            velocity.y += gravity * Time.fixedDeltaTime;
+            controller.move(velocity * Time.fixedDeltaTime);
+            yield return new WaitForFixedUpdate();
         }
 
         velocity.y = 0;
