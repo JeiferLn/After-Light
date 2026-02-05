@@ -20,7 +20,7 @@ public class RoomDarkness : MonoBehaviour
 
     IEnumerator FadeOut()
     {
-        float t = 1f;
+        float t = 0.1f;
 
         while (t > 0f)
         {

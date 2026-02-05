@@ -54,26 +54,21 @@ public class InteractableEntrance : MonoBehaviour
         float t = 0;
 
         Vector3 startPosition = entranceTransform.position;
-        Vector3 endPosition = new Vector3(startPosition.x + 1.7f, startPosition.y, startPosition.z);
+        Vector3 endPosition = new Vector3(startPosition.x + 0.5f, startPosition.y, startPosition.z);
 
         Vector3 startScale = entranceTransform.localScale;
         Vector3 endScale = new Vector3(4f, startScale.y, 1);
-
-        // Quaternion startRotation = entranceTransform.rotation;
-        // Quaternion endRotation = Quaternion.Euler(0, 0, -90);
 
         while (t < time)
         {
             entranceTransform.position = Vector3.Lerp(startPosition, endPosition, t / time);
             entranceTransform.localScale = Vector3.Lerp(startScale, endScale, t / time);
-            // entranceTransform.rotation = Quaternion.Slerp(startRotation, endRotation, t / time);
             t += Time.deltaTime;
             yield return null;
         }
 
         entranceTransform.position = endPosition;
         entranceTransform.localScale = endScale;
-        // entranceTransform.rotation = endRotation;
         room.RevealRoom();
     }
 
@@ -86,29 +81,24 @@ public class InteractableEntrance : MonoBehaviour
 
             Vector3 startPosition = entranceTransform.position;
             Vector3 endPosition = new Vector3(
-                startPosition.x - 1.7f,
+                startPosition.x - 0.5f,
                 startPosition.y,
                 startPosition.z
             );
 
             Vector3 startScale = entranceTransform.localScale;
-            Vector3 endScale = new Vector3(startScale.x, startScale.y, 1);
-
-            // Quaternion startRotation = entranceTransform.rotation;
-            // Quaternion endRotation = Quaternion.Euler(0, 0, 0);
+            Vector3 endScale = new Vector3(1, 1, 1);
 
             while (t < time)
             {
                 entranceTransform.position = Vector3.Lerp(startPosition, endPosition, t / time);
                 entranceTransform.localScale = Vector3.Lerp(startScale, endScale, t / time);
-                // entranceTransform.rotation = Quaternion.Slerp(startRotation, endRotation, t / time);
                 t += Time.deltaTime;
                 yield return null;
             }
 
             entranceTransform.position = endPosition;
             entranceTransform.localScale = endScale;
-            // entranceTransform.rotation = endRotation;
         }
     }
 }
