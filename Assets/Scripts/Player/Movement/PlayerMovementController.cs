@@ -60,7 +60,6 @@ public class PlayerMovementController : MonoBehaviour
             return;
         }
 
-        // Prime31 CharacterController2D expone rigidBody2D; puede no estar lista si algo falla en su Awake.
         originalGravityScale =
             controller.rigidBody2D != null ? controller.rigidBody2D.gravityScale : 1f;
     }
