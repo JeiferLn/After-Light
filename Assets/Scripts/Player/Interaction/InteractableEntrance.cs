@@ -72,7 +72,7 @@ public class InteractableEntrance : MonoBehaviour
         room.RevealRoom();
     }
 
-    // ------------- CLOSE LOGIC -------------
+    // ------------- CLOSE LOGIC --------------
     IEnumerator CloseRoutine(float time)
     {
         {
