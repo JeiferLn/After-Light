@@ -10,14 +10,6 @@ public class PlayerClimbAndDropController : MonoBehaviour
     private PlayerMovementController movement;
     private CharacterController2D controller;
 
-    // ---------- OBSTACLE DETECTION ----------
-    [Header("Obstacle Detection")]
-    [SerializeField]
-    private float checkDistance = 0.6f;
-
-    [SerializeField]
-    private LayerMask obstacleLayer;
-
     // ---------- STATE ----------
     private ClimbableObstacle currentObstacle;
     private bool canMakeHangDecision;
@@ -35,24 +27,12 @@ public class PlayerClimbAndDropController : MonoBehaviour
     }
 
     // ---------- CLIMB ----------
-    public void TryClimb()
+    public void TryClimb(ClimbableObstacle obstacle)
     {
-        if (movement == null || controller == null)
+        if (movement == null || controller == null || obstacle == null)
             return;
 
         if (!movement.CanMove)
-            return;
-
-        Vector2 direction = Vector2.right * Mathf.Sign(transform.localScale.x);
-        Vector2 origin = (Vector2)transform.position + Vector2.up * controller.skinWidth;
-
-        RaycastHit2D hit = Physics2D.Raycast(origin, direction, checkDistance, obstacleLayer);
-
-        if (!hit)
-            return;
-
-        ClimbableObstacle obstacle = hit.collider.GetComponent<ClimbableObstacle>();
-        if (obstacle == null)
             return;
 
         StartCoroutine(ExecuteClimb(obstacle));
@@ -127,24 +107,13 @@ public class PlayerClimbAndDropController : MonoBehaviour
     }
 
     // ---------- DROP DOWN LOGIC ----------
-    public void TryDrop()
+    public void TryDrop(ClimbableObstacle obstacle)
     {
+        if (obstacle == null)
+            return;
+
         PlayerState state = movement.CurrentState;
         if (state != PlayerState.Idle && state != PlayerState.Walking)
-            return;
-
-        RaycastHit2D hit = Physics2D.Raycast(
-            transform.position,
-            Vector2.down,
-            checkDistance,
-            obstacleLayer
-        );
-
-        if (!hit)
-            return;
-
-        ClimbableObstacle obstacle = hit.collider.GetComponent<ClimbableObstacle>();
-        if (obstacle == null || obstacle.hangPoint == null)
             return;
 
         StartCoroutine(ExecuteHang(obstacle));

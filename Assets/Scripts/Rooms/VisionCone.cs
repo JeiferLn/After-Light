@@ -2,15 +2,36 @@ using UnityEngine;
 
 public class VisionCone : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // ------------- VISUALS -------------
+    public GameObject cone;
+
+    private void OnEnable()
     {
-        
+        PlayerMovementEvents.OnPlayerMoved += Hide;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        PlayerMovementEvents.OnPlayerMoved -= Hide;
+    }
+
+    private void Start()
+    {
+        ShowCone();
+    }
+
+    public bool IsVisible => cone != null && cone.activeSelf;
+
+    public void ShowCone()
+    {
+        if (cone == null)
+            return;
+        cone.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        if (cone != null)
+            cone.SetActive(false);
     }
 }

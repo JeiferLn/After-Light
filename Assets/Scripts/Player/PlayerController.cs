@@ -24,20 +24,20 @@ public class PlayerController : MonoBehaviour
         movementController.Move(moveDirection);
     }
 
-    public void TryClimb()
+    public void TryClimb(ClimbableObstacle obstacle)
     {
-        if (climbController == null)
+        if (climbController == null || obstacle == null)
             return;
 
-        climbController.TryClimb();
+        climbController.TryClimb(obstacle);
     }
 
-    public void TryDrop()
+    public void TryDrop(ClimbableObstacle obstacle)
     {
-        if (climbController == null)
+        if (climbController == null || obstacle == null)
             return;
 
-        climbController.TryDrop();
+        climbController.TryDrop(obstacle);
     }
 
     public void HangClimbUp()

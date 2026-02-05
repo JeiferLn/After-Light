@@ -4,6 +4,7 @@ public enum PlayerState
     Walking,
     Crunching,
     Interacting,
+    Peeking,
     Climbing,
     Hanging,
     Droping,
