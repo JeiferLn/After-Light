@@ -125,9 +125,15 @@ public class PlayerInputSystem : MonoBehaviour
                 return;
             }
             if (timeSinceLastTap < 0.5f)
+            {
+                Debug.Log("OpenOrCloseFast");
                 currentEntrance.OpenOrCloseFast(playerMovementController);
+            }
             else
+            {
+                Debug.Log("OpenOrCloseSlow");
                 currentEntrance.OpenOrCloseSlow(playerMovementController);
+            }
 
             lastTapTime = Time.time;
         }
