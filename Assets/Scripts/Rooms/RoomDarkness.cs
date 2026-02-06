@@ -6,6 +6,9 @@ public class RoomDarkness : MonoBehaviour
     // ------------- VISUALS -------------
     SpriteRenderer sr;
 
+    // ------------- VARIABLES -------------
+    public bool isRevealed;
+
     // ------------- INITIALIZATION -------------
     void Awake()
     {
@@ -16,6 +19,7 @@ public class RoomDarkness : MonoBehaviour
     public void RevealRoom()
     {
         StartCoroutine(FadeOut());
+        isRevealed = true;
     }
 
     IEnumerator FadeOut()

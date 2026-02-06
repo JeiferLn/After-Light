@@ -12,8 +12,8 @@ TagManager:
   - Water
   - UI
   - Obstacle
-  - Entrance
-  - 
+  - EntranceClosed
+  - EntranceOpened
   - 
   - 
   - 

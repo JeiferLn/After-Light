@@ -1,13 +1,17 @@
 using System;
+using System.Collections;
 using Prime31;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerInputSystem : MonoBehaviour
 {
+    // ---------- PLAYER CONTROLLER ----------
     private PlayerController playerController;
+    private PlayerMovementController playerMovementController;
     private CharacterController2D characterController;
 
+    // ---------- PLAYER MOVEMENT CONTROLLER ----------
     [Header("Interaction (Entrance)")]
     [SerializeField]
     float interactEntranceRange = 1.5f;
@@ -15,6 +19,7 @@ public class PlayerInputSystem : MonoBehaviour
     [SerializeField]
     LayerMask entranceLayer;
 
+    // ---------- OBSTACLE DETECTION (CLIMB/DROP) ----------
     [Header("Obstacle Detection (Climb/Drop)")]
     [SerializeField]
     float checkDistance = 0.6f;
@@ -22,15 +27,19 @@ public class PlayerInputSystem : MonoBehaviour
     [SerializeField]
     LayerMask obstacleLayer;
 
-    float ePressedTime;
+    // ---------- INTERACTION (ENTRANCE) ----------
     float lastTapTime;
+    bool peekTriggeredThisHold;
+    Coroutine peekHoldRoutine;
 
+    // ---------- CURRENT ENTRANCE ----------
     InteractableEntrance currentEntrance;
 
     // ---------- AWAKE ----------
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
+        playerMovementController = GetComponent<PlayerMovementController>();
         characterController = GetComponent<CharacterController2D>();
     }
 
@@ -86,26 +95,54 @@ public class PlayerInputSystem : MonoBehaviour
         if (currentEntrance == null)
             return;
 
-        if (ctx.performed)
+        if (ctx.started)
         {
-            if (Time.time - lastTapTime < 0.25f)
-            {
-                currentEntrance.OpenOrCloseFast();
-                return;
-            }
-
-            ePressedTime = Time.time;
-            lastTapTime = Time.time;
+            peekTriggeredThisHold = false;
+            if (peekHoldRoutine != null)
+                StopCoroutine(peekHoldRoutine);
+            peekHoldRoutine = StartCoroutine(PeekAfterHold());
+            return;
         }
 
         if (ctx.canceled)
         {
-            float heldTime = Time.time - ePressedTime;
+            if (peekHoldRoutine != null)
+            {
+                StopCoroutine(peekHoldRoutine);
+                peekHoldRoutine = null;
+            }
 
-            if (heldTime > 0.35f)
-                currentEntrance.OpenOrCloseSlow();
+            if (peekTriggeredThisHold)
+                return;
+
+            float timeSinceLastTap = Time.time - lastTapTime;
+            if (
+                playerMovementController != null
+                && playerMovementController.CurrentState == PlayerState.Peeking
+            )
+            {
+                currentEntrance.Peek(playerMovementController);
+                return;
+            }
+            if (timeSinceLastTap < 0.5f)
+                currentEntrance.OpenOrCloseFast(playerMovementController);
             else
-                currentEntrance.Peek();
+                currentEntrance.OpenOrCloseSlow(playerMovementController);
+
+            lastTapTime = Time.time;
+        }
+    }
+
+    // ---------- PEEK AFTER HOLD ----------
+    IEnumerator PeekAfterHold()
+    {
+        yield return new WaitForSeconds(1f);
+        peekHoldRoutine = null;
+        DetectInteractableEntrance();
+        if (currentEntrance != null && playerMovementController != null)
+        {
+            currentEntrance.Peek(playerMovementController);
+            peekTriggeredThisHold = true;
         }
     }
 

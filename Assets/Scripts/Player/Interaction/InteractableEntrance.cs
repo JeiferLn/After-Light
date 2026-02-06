@@ -20,36 +20,50 @@ public class InteractableEntrance : MonoBehaviour
     private bool opened;
 
     // ------------- PUBLIC METHODS -------------
-    public void Peek()
+    public void Peek(PlayerMovementController playerState)
     {
-        if (opened)
+        if (playerState == null || opened || room.isRevealed)
             return;
 
         if (visionCone != null && visionCone.IsVisible)
+        {
+            playerState.CurrentState = PlayerState.Idle;
             visionCone.Hide();
+        }
         else if (visionCone != null)
+        {
+            playerState.CurrentState = PlayerState.Peeking;
             visionCone.ShowCone();
+        }
     }
 
-    public void OpenOrCloseSlow()
+    public void OpenOrCloseSlow(PlayerMovementController playerState)
     {
+        if (playerState == null)
+            return;
         if (opened)
-            StartCoroutine(CloseRoutine(1.5f));
+            StartCoroutine(CloseRoutine(1.5f, playerState));
         else
-            StartCoroutine(OpenRoutine(1.5f));
+            StartCoroutine(OpenRoutine(1.5f, playerState));
     }
 
-    public void OpenOrCloseFast()
+    public void OpenOrCloseFast(PlayerMovementController playerState)
     {
+        if (playerState == null)
+            return;
         if (opened)
-            StartCoroutine(CloseRoutine(0.3f));
+            StartCoroutine(CloseRoutine(0.3f, playerState));
         else
-            StartCoroutine(OpenRoutine(0.3f));
+            StartCoroutine(OpenRoutine(0.3f, playerState));
     }
 
     // ------------- OPEN LOGIC -------------
-    IEnumerator OpenRoutine(float time)
+    IEnumerator OpenRoutine(float time, PlayerMovementController playerState)
     {
+        playerState.CurrentState = PlayerState.Interacting;
+        if (!room.isRevealed)
+            room.RevealRoom();
+
         opened = true;
         float t = 0;
 
@@ -69,12 +83,15 @@ public class InteractableEntrance : MonoBehaviour
 
         entranceTransform.position = endPosition;
         entranceTransform.localScale = endScale;
-        room.RevealRoom();
+
+        gameObject.layer = LayerMask.NameToLayer("EntranceOpened");
+        playerState.CurrentState = PlayerState.Idle;
     }
 
     // ------------- CLOSE LOGIC --------------
-    IEnumerator CloseRoutine(float time)
+    IEnumerator CloseRoutine(float time, PlayerMovementController playerState)
     {
+        playerState.CurrentState = PlayerState.Interacting;
         {
             opened = false;
             float t = 0;
@@ -99,6 +116,9 @@ public class InteractableEntrance : MonoBehaviour
 
             entranceTransform.position = endPosition;
             entranceTransform.localScale = endScale;
+
+            gameObject.layer = LayerMask.NameToLayer("EntranceClosed");
+            playerState.CurrentState = PlayerState.Idle;
         }
     }
 }
