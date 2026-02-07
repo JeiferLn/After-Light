@@ -31,6 +31,8 @@ public class PlayerInputSystem : MonoBehaviour
     float lastTapTime;
     bool peekTriggeredThisHold;
     Coroutine peekHoldRoutine;
+    Coroutine slowTapRoutine;
+    const float doubleTapWindow = 0.35f;
 
     // ---------- CURRENT ENTRANCE ----------
     InteractableEntrance currentEntrance;
@@ -117,23 +119,20 @@ public class PlayerInputSystem : MonoBehaviour
                 return;
 
             float timeSinceLastTap = Time.time - lastTapTime;
-            if (
-                playerMovementController != null
-                && playerMovementController.CurrentState == PlayerState.Peeking
-            )
+
+            if (timeSinceLastTap < doubleTapWindow)
             {
-                currentEntrance.Peek(playerMovementController);
-                return;
-            }
-            if (timeSinceLastTap < 0.5f)
-            {
-                Debug.Log("OpenOrCloseFast");
+                if (slowTapRoutine != null)
+                {
+                    StopCoroutine(slowTapRoutine);
+                    slowTapRoutine = null;
+                }
+
                 currentEntrance.OpenOrCloseFast(playerMovementController);
             }
             else
             {
-                Debug.Log("OpenOrCloseSlow");
-                currentEntrance.OpenOrCloseSlow(playerMovementController);
+                slowTapRoutine = StartCoroutine(SlowTapDelayed());
             }
 
             lastTapTime = Time.time;
@@ -145,7 +144,7 @@ public class PlayerInputSystem : MonoBehaviour
         VisionCone.PeekLookInput = ctx.ReadValue<Vector2>();
     }
 
-    // ---------- PEEK AFTER HOLD ----------
+    // ---------- PEEK AFTER HOLD COROUTINE ----------
     IEnumerator PeekAfterHold()
     {
         yield return new WaitForSeconds(1f);
@@ -156,6 +155,16 @@ public class PlayerInputSystem : MonoBehaviour
             currentEntrance.Peek(playerMovementController);
             peekTriggeredThisHold = true;
         }
+    }
+
+    // ---------- SLOW TAP DELAYED COROUTINE ----------
+    IEnumerator SlowTapDelayed()
+    {
+        yield return new WaitForSeconds(doubleTapWindow);
+
+        currentEntrance.OpenOrCloseSlow(playerMovementController);
+
+        slowTapRoutine = null;
     }
 
     // ---------- RAYCAST ----------
