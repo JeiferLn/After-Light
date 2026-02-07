@@ -289,8 +289,8 @@ GameObject:
   m_Component:
   - component: {fileID: 164295228}
   - component: {fileID: 164295227}
-  - component: {fileID: 164295225}
   - component: {fileID: 164295229}
+  - component: {fileID: 164295225}
   m_Layer: 9
   m_Name: Triangle
   m_TagString: Untagged
@@ -311,6 +311,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionText: Interactuar
+  objectRenderer: {fileID: 164295227}
+  outlineProperty: _OutlineEnabled
   message: '!Peligro!'
 --- !u!212 &164295227
 SpriteRenderer:
@@ -335,7 +337,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: dd627299c8b8db941b9a9efb81317d26, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -356,12 +358,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 6723404513629245855, guid: 6818bf34311185543ac295f1c8663aec, type: 3}
   m_Color: {r: 1, g: 0.92692465, b: 0.2320754, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.89, y: 0.81}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -416,17 +418,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.21133333}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.89, y: 0.81}
+    newSize: {x: 0.89, y: 0.81}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.89, y: 0.81}
   m_EdgeRadius: 0
 --- !u!1 &259488868
 GameObject:
@@ -838,7 +840,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.078348, y: 0.86361504, z: -10}
+  m_LocalPosition: {x: 11.078783, y: 0.86361504, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1653,7 +1655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04c62c0b94159e4419c1ee2e10da76b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionRadius: 1.2
+  interactionRadius: 0.8
   interactableLayer:
     serializedVersion: 2
     m_Bits: 512
