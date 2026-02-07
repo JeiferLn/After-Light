@@ -48,6 +48,7 @@ public class PlayerInputSystem : MonoBehaviour
     {
         if (!playerController.CanMove)
             return;
+
         Vector2 moveDirection = ctx.canceled ? Vector2.zero : ctx.ReadValue<Vector2>();
         playerController.Move(moveDirection);
 
@@ -137,6 +138,11 @@ public class PlayerInputSystem : MonoBehaviour
 
             lastTapTime = Time.time;
         }
+    }
+
+    public void InputPeekLook(InputAction.CallbackContext ctx)
+    {
+        VisionCone.PeekLookInput = ctx.ReadValue<Vector2>();
     }
 
     // ---------- PEEK AFTER HOLD ----------

@@ -129,15 +129,15 @@ GameObject:
   m_Component:
   - component: {fileID: 136026016}
   - component: {fileID: 136026018}
-  - component: {fileID: 136026017}
   - component: {fileID: 136026019}
+  - component: {fileID: 136026017}
   m_Layer: 7
   m_Name: ConeSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &136026016
 Transform:
   m_ObjectHideFlags: 0
@@ -147,8 +147,8 @@ Transform:
   m_GameObject: {fileID: 136026015}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 13.673, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 23, z: 1}
+  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalScale: {x: 1, y: 24, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2105549341}
@@ -165,6 +165,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d36bacece4e4c4d3eae9588b37409427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  coneOrientation: 0
+  debugLog: 0
+  rotationSpeed: 2
+  rotationSmoothing: 0.1
   cone: {fileID: 136026015}
 --- !u!212 &136026018
 SpriteRenderer:
@@ -210,7 +214,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 53acf9231f5bb4e2fb10dede2ed6b199, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
@@ -686,7 +690,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.0962925, y: 0.86361504, z: -10}
+  m_LocalPosition: {x: 11.084572, y: 0.86361504, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1308,6 +1312,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 765563e5-9cdf-49c7-8f28-21863e308eb5
     m_ActionName: 'Player/Interaction[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 736994878}
+        m_TargetAssemblyTypeName: PlayerInputSystem, Assembly-CSharp
+        m_MethodName: InputPeekLook
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 62f01840-bf48-4fa4-a632-6396f953d8d9
+    m_ActionName: 'Player/PeekLook[/Keyboard/w,/Keyboard/s]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
