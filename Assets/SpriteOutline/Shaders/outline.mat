@@ -57,7 +57,7 @@ Material:
     - _OutlineMode: 0
     - _OutlinePosition: 2
     - _OutlineShape: 0
-    - _Thickness: 1.37
+    - _Thickness: 1
     - _TileMode: 0
     - _Weight: 0
     - _ZWrite: 0
