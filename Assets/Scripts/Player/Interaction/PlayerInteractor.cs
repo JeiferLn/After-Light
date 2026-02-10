@@ -35,13 +35,13 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
-        DetectInteractables();
+        DetectInteractable();
     }
 
     // ---------- PUBLIC METHODS (CALLED BY INPUT SYSTEM) ----------
     public void OnInteractionStarted()
     {
-        DetectInteractables();
+        DetectInteractable();
 
         // Si hay una puerta
         if (currentEntrance != null)
@@ -78,12 +78,10 @@ public class PlayerInteractor : MonoBehaviour
 
     public void OnInteractionCanceled()
     {
-        DetectInteractables();
+        DetectInteractable();
 
-        // Si hay una puerta, manejar lógica de tap/double tap
         if (currentEntrance != null)
         {
-            // Si el jugador está en estado Peeking, no procesar la lógica de abrir/cerrar puerta
             if (
                 playerMovementController != null
                 && playerMovementController.CurrentState == PlayerState.Peeking
@@ -130,11 +128,6 @@ public class PlayerInteractor : MonoBehaviour
     }
 
     // ---------- DETECTION ----------
-    private void DetectInteractables()
-    {
-        DetectInteractable();
-    }
-
     private void DetectInteractable()
     {
         Collider2D hit = Physics2D.OverlapCircle(
@@ -156,14 +149,17 @@ public class PlayerInteractor : MonoBehaviour
                 ClearCurrentInteractable();
                 currentInteractable = interactable;
                 currentInteractable.OnFocus();
+                return;
             }
         }
-        else if (hit.TryGetComponent(out InteractableEntrance entrance))
+
+        if (hit.TryGetComponent(out InteractableEntrance entrance))
         {
             if (currentEntrance != entrance)
             {
                 currentEntrance = null;
                 currentEntrance = entrance;
+                return;
             }
         }
     }
@@ -175,6 +171,10 @@ public class PlayerInteractor : MonoBehaviour
         {
             currentInteractable.OnLoseFocus();
             currentInteractable = null;
+        }
+        if (currentEntrance != null)
+        {
+            currentEntrance = null;
         }
     }
 

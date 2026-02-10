@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 136026018}
   - component: {fileID: 136026019}
   - component: {fileID: 136026017}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: ConeSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +597,7 @@ GameObject:
   m_Component:
   - component: {fileID: 304755625}
   - component: {fileID: 304755626}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: DoorSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1652,12 +1652,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionRadius: 0.8
-  interactableLayer:
+  interactionLayer:
     serializedVersion: 2
-    m_Bits: 512
-  entranceLayer:
-    serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 896
 --- !u!1 &872467503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1856,7 +1853,7 @@ GameObject:
   - component: {fileID: 983964720}
   - component: {fileID: 983964722}
   - component: {fileID: 983964721}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: RoomDarkness
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3200,7 +3197,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
