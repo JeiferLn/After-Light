@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerInteractor : MonoBehaviour
+public class PlayerInteraction : MonoBehaviour
 {
     // ---------- COMPONENTS ----------
     private PlayerMovementController playerMovementController;

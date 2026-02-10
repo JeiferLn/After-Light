@@ -6,7 +6,7 @@ public class PlayerInputSystem : MonoBehaviour
 {
     // ---------- COMPONENTS ----------
     private PlayerController playerController;
-    private PlayerInteractor playerInteractor;
+    private PlayerInteraction playerInteraction;
     private CharacterController2D characterController;
 
     // ---------- OBSTACLE DETECTION (CLIMB/DROP) ----------
@@ -21,7 +21,7 @@ public class PlayerInputSystem : MonoBehaviour
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        playerInteractor = GetComponent<PlayerInteractor>();
+        playerInteraction = GetComponent<PlayerInteraction>();
         characterController = GetComponent<CharacterController2D>();
     }
 
@@ -70,16 +70,16 @@ public class PlayerInputSystem : MonoBehaviour
     // ---------- INTERACTION ----------
     public void InputInteraction(InputAction.CallbackContext ctx)
     {
-        if (playerInteractor == null)
+        if (playerInteraction == null)
             return;
 
         if (ctx.started)
         {
-            playerInteractor.OnInteractionStarted();
+            playerInteraction.OnInteractionStarted();
         }
         else if (ctx.canceled)
         {
-            playerInteractor.OnInteractionCanceled();
+            playerInteraction.OnInteractionCanceled();
         }
     }
 
