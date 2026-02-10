@@ -73,11 +73,17 @@ public class VisionCone : MonoBehaviour
         // Filtrar inputs según la orientación del cono
         // Horizontal: ignorar eje X (A/D)
         // Vertical: ignorar eje Y (W/S)
-        if (coneOrientation == ConeOrientation.HorizontalRight || coneOrientation == ConeOrientation.HorizontalLeft)
+        if (
+            coneOrientation == ConeOrientation.HorizontalRight
+            || coneOrientation == ConeOrientation.HorizontalLeft
+        )
         {
             lookDirection.x = 0f;
         }
-        else if (coneOrientation == ConeOrientation.VerticalUp || coneOrientation == ConeOrientation.VerticalDown)
+        else if (
+            coneOrientation == ConeOrientation.VerticalUp
+            || coneOrientation == ConeOrientation.VerticalDown
+        )
         {
             lookDirection.y = 0f;
         }

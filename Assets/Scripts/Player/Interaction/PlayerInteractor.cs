@@ -10,15 +10,10 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField]
     private float interactionRadius = 1.2f;
 
-    // ---------- INTERACTION (GENERIC) ----------
-    [Header("Generic Interaction")]
+    // ---------- INTERACTION LAYER ----------
+    [Header("Interaction Layer")]
     [SerializeField]
-    private LayerMask interactableLayer;
-
-    // ---------- INTERACTION (ENTRANCE) ----------
-    [Header("Entrance Interaction")]
-    [SerializeField]
-    private LayerMask entranceLayer;
+    private LayerMask interactionLayer;
 
     // ---------- STATE ----------
     private Interactable currentInteractable;
@@ -48,9 +43,25 @@ public class PlayerInteractor : MonoBehaviour
     {
         DetectInteractables();
 
-        // Si hay una puerta, iniciar lógica de hold para peek
+        // Si hay una puerta
         if (currentEntrance != null)
         {
+            // Si el jugador ya está en estado Peeking, cerrar el cono
+            if (
+                playerMovementController != null
+                && playerMovementController.CurrentState == PlayerState.Peeking
+            )
+            {
+                if (peekHoldRoutine != null)
+                {
+                    StopCoroutine(peekHoldRoutine);
+                    peekHoldRoutine = null;
+                }
+                currentEntrance.ClosePeek(playerMovementController);
+                return;
+            }
+
+            // Si no está en peek, iniciar lógica de hold para peek
             peekTriggeredThisHold = false;
             if (peekHoldRoutine != null)
                 StopCoroutine(peekHoldRoutine);
@@ -72,16 +83,17 @@ public class PlayerInteractor : MonoBehaviour
         // Si hay una puerta, manejar lógica de tap/double tap
         if (currentEntrance != null)
         {
-            // Si el jugador está en estado Peeking, cerrar el cono en lugar de abrir la puerta
-            if (playerMovementController != null && playerMovementController.CurrentState == PlayerState.Peeking)
+            // Si el jugador está en estado Peeking, no procesar la lógica de abrir/cerrar puerta
+            if (
+                playerMovementController != null
+                && playerMovementController.CurrentState == PlayerState.Peeking
+            )
             {
                 if (peekHoldRoutine != null)
                 {
                     StopCoroutine(peekHoldRoutine);
                     peekHoldRoutine = null;
                 }
-
-                currentEntrance.ClosePeek(playerMovementController);
                 return;
             }
 
@@ -120,16 +132,15 @@ public class PlayerInteractor : MonoBehaviour
     // ---------- DETECTION ----------
     private void DetectInteractables()
     {
-        DetectGenericInteractable();
-        DetectInteractableEntrance();
+        DetectInteractable();
     }
 
-    private void DetectGenericInteractable()
+    private void DetectInteractable()
     {
         Collider2D hit = Physics2D.OverlapCircle(
             transform.position,
             interactionRadius,
-            interactableLayer
+            interactionLayer
         );
 
         if (hit == null)
@@ -147,31 +158,13 @@ public class PlayerInteractor : MonoBehaviour
                 currentInteractable.OnFocus();
             }
         }
-    }
-
-    private void DetectInteractableEntrance()
-    {
-        Vector2 direction = Vector2.right * Mathf.Sign(transform.localScale.x);
-
-        RaycastHit2D hit = Physics2D.Raycast(
-            transform.position,
-            direction,
-            interactionRadius,
-            entranceLayer
-        );
-
-        Debug.DrawRay(transform.position, direction * interactionRadius, Color.green);
-
-        if (hit && hit.collider.TryGetComponent(out InteractableEntrance entrance))
+        else if (hit.TryGetComponent(out InteractableEntrance entrance))
         {
             if (currentEntrance != entrance)
             {
+                currentEntrance = null;
                 currentEntrance = entrance;
             }
-        }
-        else
-        {
-            currentEntrance = null;
         }
     }
 
@@ -190,7 +183,7 @@ public class PlayerInteractor : MonoBehaviour
     {
         yield return new WaitForSeconds(peekHoldDuration);
         peekHoldRoutine = null;
-        DetectInteractableEntrance();
+        DetectInteractable();
         if (currentEntrance != null && playerMovementController != null)
         {
             currentEntrance.Peek(playerMovementController);

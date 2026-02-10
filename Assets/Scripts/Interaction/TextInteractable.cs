@@ -3,7 +3,8 @@ using UnityEngine;
 public class TextInteractable : Interactable
 {
     [TextArea]
-    [SerializeField] private string message;
+    [SerializeField]
+    private string message;
 
     public override void Interact()
     {

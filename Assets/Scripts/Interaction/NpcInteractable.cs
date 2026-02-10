@@ -4,7 +4,8 @@ public class NPCInteractable : Interactable
 {
     [Header("NPC Dialogue")]
     [TextArea]
-    [SerializeField] private string[] dialogueLines;
+    [SerializeField]
+    private string[] dialogueLines;
 
     private int currentLine;
 
@@ -12,7 +13,7 @@ public class NPCInteractable : Interactable
     {
         if (dialogueLines == null || dialogueLines.Length == 0)
             return;
-        
+
         Debug.Log(dialogueLines[currentLine]);
 
         currentLine++;
