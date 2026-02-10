@@ -34,17 +34,6 @@ public class VisionCone : MonoBehaviour
     // ------------- VISUALS -------------
     public GameObject cone;
 
-    // ------------- EVENTS -------------
-    private void OnEnable()
-    {
-        PlayerMovementEvents.OnPlayerMoved += Hide;
-    }
-
-    private void OnDisable()
-    {
-        PlayerMovementEvents.OnPlayerMoved -= Hide;
-    }
-
     // ------------- START -------------
     private void Start()
     {
@@ -80,6 +69,18 @@ public class VisionCone : MonoBehaviour
     {
         if (cone == null)
             return;
+
+        // Filtrar inputs según la orientación del cono
+        // Horizontal: ignorar eje X (A/D)
+        // Vertical: ignorar eje Y (W/S)
+        if (coneOrientation == ConeOrientation.HorizontalRight || coneOrientation == ConeOrientation.HorizontalLeft)
+        {
+            lookDirection.x = 0f;
+        }
+        else if (coneOrientation == ConeOrientation.VerticalUp || coneOrientation == ConeOrientation.VerticalDown)
+        {
+            lookDirection.y = 0f;
+        }
 
         if (lookDirection.sqrMagnitude < 0.01f)
         {

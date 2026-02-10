@@ -37,6 +37,18 @@ public class InteractableEntrance : MonoBehaviour
         }
     }
 
+    public void ClosePeek(PlayerMovementController playerState)
+    {
+        if (playerState == null || visionCone == null)
+            return;
+
+        if (visionCone.IsVisible)
+        {
+            playerState.CurrentState = PlayerState.Idle;
+            visionCone.Hide();
+        }
+    }
+
     public void OpenOrCloseSlow(PlayerMovementController playerState)
     {
         if (playerState == null)

@@ -2,11 +2,16 @@ using UnityEngine;
 
 public abstract class Interactable : MonoBehaviour
 {
-    [Header("Interaction")] [SerializeField]
+    [Header("Interaction")]
+    [SerializeField]
     protected string interactionText = "Interactuar";
 
-    [Header("Outline")] [SerializeField] private Renderer objectRenderer;
-    [SerializeField] private string outlineProperty = "_OutlineEnabled";
+    [Header("Outline")]
+    [SerializeField]
+    private Renderer objectRenderer;
+
+    [SerializeField]
+    private string outlineProperty = "_OutlineEnabled";
 
     protected Material materialInstance;
 
@@ -20,7 +25,8 @@ public abstract class Interactable : MonoBehaviour
 
     public virtual void OnFocus()
     {
-        if (materialInstance == null) return;
+        if (materialInstance == null)
+            return;
 
         Debug.Log($"Focus: {name}");
         materialInstance.SetFloat(outlineProperty, 1f);
@@ -28,7 +34,8 @@ public abstract class Interactable : MonoBehaviour
 
     public virtual void OnLoseFocus()
     {
-        if (materialInstance == null) return;
+        if (materialInstance == null)
+            return;
 
         Debug.Log($"LoseFocus: {name}");
         materialInstance.SetFloat(outlineProperty, 0f);
