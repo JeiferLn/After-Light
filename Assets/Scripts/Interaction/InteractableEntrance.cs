@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractableEntrance : MonoBehaviour
@@ -11,18 +12,19 @@ public class InteractableEntrance : MonoBehaviour
     // ------------- ROOM -------------
     [Header("Room")]
     [SerializeField]
-    private RoomDarkness room;
+    private List<RoomDarkness> rooms;
 
     [SerializeField]
     private VisionCone visionCone;
 
     // ------------- VARIABLES -------------
     private bool opened;
+    private bool allRoomsRevealed;
 
     // ------------- PUBLIC METHODS -------------
     public void Peek(PlayerMovementController playerState)
     {
-        if (playerState == null || opened || room.isRevealed)
+        if (playerState == null || opened || allRoomsRevealed)
             return;
 
         if (visionCone != null && visionCone.IsVisible)
@@ -73,8 +75,18 @@ public class InteractableEntrance : MonoBehaviour
     IEnumerator OpenRoutine(float time, PlayerMovementController playerState)
     {
         playerState.CurrentState = PlayerState.Interacting;
-        if (!room.isRevealed)
-            room.RevealRoom();
+        if (!allRoomsRevealed)
+        {
+            foreach (RoomDarkness room in rooms)
+            {
+                if (!room.isRevealed)
+                {
+                    room.RevealRoom();
+                    allRoomsRevealed = false;
+                }
+            }
+            allRoomsRevealed = true;
+        }
 
         opened = true;
         float t = 0;

@@ -18,6 +18,7 @@ public class PlayerInteraction : MonoBehaviour
     // ---------- STATE ----------
     private Interactable currentInteractable;
     private InteractableEntrance currentEntrance;
+    private InteractableLadder currentLadder;
 
     // ---------- ENTRANCE INTERACTION STATE ----------
     private float lastTapTime;
@@ -69,7 +70,19 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        // Si hay un interactable genérico, interactuar inmediatamente
+        // Si hay una escalera de mano
+        if (currentLadder != null)
+        {
+            if (playerMovementController.CurrentState == PlayerState.Climbing)
+                return;
+
+            currentLadder.TryClimb(
+                playerMovementController,
+                currentLadder.GetComponent<LadderObstacle>()
+            );
+        }
+
+        // Si hay un interactable genérico]
         if (currentInteractable != null)
         {
             currentInteractable.Interact();
@@ -157,8 +170,18 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (currentEntrance != entrance)
             {
-                currentEntrance = null;
+                ClearCurrentInteractable();
                 currentEntrance = entrance;
+                return;
+            }
+        }
+
+        if (hit.TryGetComponent(out InteractableLadder ladder))
+        {
+            if (currentLadder != ladder)
+            {
+                ClearCurrentInteractable();
+                currentLadder = ladder;
                 return;
             }
         }
@@ -175,6 +198,10 @@ public class PlayerInteraction : MonoBehaviour
         if (currentEntrance != null)
         {
             currentEntrance = null;
+        }
+        if (currentLadder != null)
+        {
+            currentLadder = null;
         }
     }
 

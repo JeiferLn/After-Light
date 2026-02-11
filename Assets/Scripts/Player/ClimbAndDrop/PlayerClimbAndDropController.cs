@@ -213,21 +213,11 @@ public class PlayerClimbAndDropController : MonoBehaviour
     // ---------- MOVEMENT HELPERS ----------
     private IEnumerator MoveTo(Vector3 target)
     {
-        float duration = currentObstacle.traversalDuration;
-        float elapsed = 0f;
-
-        Vector3 start = transform.position;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-
-            Vector3 next = Vector3.Lerp(start, target, elapsed / duration);
-            Vector3 delta = next - transform.position;
-
-            controller.move(delta);
-
-            yield return null;
-        }
+        yield return MovementHelper.MoveTo(
+            transform,
+            delta => controller.move(delta),
+            target,
+            currentObstacle.traversalDuration
+        );
     }
 }
