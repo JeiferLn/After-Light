@@ -1,8 +1,12 @@
 using UnityEngine;
 using DG.Tweening;
+using Unity.Cinemachine;
 
 public class CameraAimController : MonoBehaviour
 {
+    [SerializeField]
+    private CinemachineThirdPersonFollow thirdPersonFollow;
+
     [SerializeField]
     private Vector3 normalPos = new Vector3(0.798f, 2.481f, 0.472f);
     [SerializeField]
@@ -27,10 +31,12 @@ public class CameraAimController : MonoBehaviour
         if (isAiming)
         {
             MoveTo(aimPos);
+            thirdPersonFollow.Damping.z = 0.3f;
         }
         else
         {
             MoveTo(normalPos);
+            thirdPersonFollow.Damping.z = 1f;
         }
     }
 
