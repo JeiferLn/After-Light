@@ -1,50 +1,49 @@
 using UnityEngine;
-using DG.Tweening;
-using Unity.Cinemachine;
 
 public class CameraAimController : MonoBehaviour
 {
-    [SerializeField]
-    private CinemachineThirdPersonFollow thirdPersonFollow;
+    [SerializeField] private float sensitivity = 100f;
+    [SerializeField] private float minVerticalAngle = -40f;
+    [SerializeField] private float maxVerticalAngle = 30f;
 
-    [SerializeField]
-    private Vector3 normalPos = new Vector3(0.798f, 2.481f, 0.472f);
-    [SerializeField]
-    private Vector3 aimPos = new Vector3(0.697f, 2.295f, 1.664f);
-    [SerializeField]
-    private float duration = 0.2f;
-    private bool isAiming = false;
-    private Tween currentTween;
+    private Vector3 normalPos;
 
-    public void SetTargetPosition(bool isAiming)
+    private Vector2 lookInput;
+
+    private float verticalRotation = 0f;
+    private float horizontalRotation = 0f;
+
+    void Awake()
     {
-        if (currentTween != null)
-        {
-            currentTween.Kill();
-        }
+        normalPos = transform.localPosition;
 
-        this.isAiming = isAiming;
+        horizontalRotation = transform.eulerAngles.y;
+        verticalRotation = transform.eulerAngles.x;
+    }
+
+    public void SetLookInput(Vector2 look)
+    {
+        lookInput = look;
     }
 
     void Update()
     {
-        if (isAiming)
-        {
-            MoveTo(aimPos);
-            thirdPersonFollow.Damping.z = 0.3f;
-        }
-        else
-        {
-            MoveTo(normalPos);
-            thirdPersonFollow.Damping.z = 1f;
-        }
-    }
+        transform.localPosition = Vector3.Lerp(
+            transform.localPosition,
+            normalPos,
+            Time.deltaTime * 15f
+        );
 
-    void MoveTo(Vector3 targetPos)
-    {
-        currentTween?.Kill();
+        if (lookInput.sqrMagnitude < 0.01f) return;
 
-        currentTween = transform.DOLocalMove(targetPos, duration)
-                    .SetEase(Ease.OutSine);
+        float mouseX = lookInput.x * sensitivity * Time.deltaTime;
+        float mouseY = lookInput.y * sensitivity * Time.deltaTime;
+
+        horizontalRotation += mouseX;
+
+        verticalRotation -= mouseY;
+        verticalRotation = Mathf.Clamp(verticalRotation, minVerticalAngle, maxVerticalAngle);
+
+        transform.rotation = Quaternion.Euler(verticalRotation, horizontalRotation, 0f);
     }
 }

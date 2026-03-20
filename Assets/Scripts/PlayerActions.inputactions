@@ -16,13 +16,13 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Aim",
-                    "type": "Button",
-                    "id": "eda06a74-6403-4b45-a965-c1588626f96d",
-                    "expectedControlType": "",
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "31e86369-a351-489b-9b22-bd06cd2795f0",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -83,12 +83,12 @@
                 },
                 {
                     "name": "",
-                    "id": "cbd2c1fe-3389-43df-b52d-e3094748a5cd",
-                    "path": "<Mouse>/rightButton",
+                    "id": "67a16b0e-ebbd-4c71-9da6-2700751efe7b",
+                    "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aim",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
