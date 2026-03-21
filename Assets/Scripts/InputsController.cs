@@ -3,13 +3,12 @@ using UnityEngine.InputSystem;
 
 public class InputsController : MonoBehaviour
 {
-    private CameraAimController cameraAimController;
+    // [SerializeField] private CameraAimController cameraAimController;
     private PlayerController playerController;
 
     void Awake()
     {
         playerController = GetComponent<PlayerController>();
-        cameraAimController = transform.GetChild(0).GetComponent<CameraAimController>();
     }
 
     public void OnMoveInput(InputAction.CallbackContext context)
@@ -22,9 +21,9 @@ public class InputsController : MonoBehaviour
 
     public void OnLookInput(InputAction.CallbackContext context)
     {
-        if (cameraAimController == null) return;
+        // if (cameraAimController == null) return;
 
-        Vector2 input = context.ReadValue<Vector2>();
-        cameraAimController.SetLookInput(input);
+        // Vector2 input = context.ReadValue<Vector2>();
+        // cameraAimController.SetLookInput(input);
     }
 }
