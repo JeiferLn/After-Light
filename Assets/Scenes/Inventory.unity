@@ -538,6 +538,7 @@ GameObject:
   - component: {fileID: 1563338007}
   - component: {fileID: 1563338006}
   - component: {fileID: 1563338005}
+  - component: {fileID: 1563338008}
   m_Layer: 0
   m_Name: InventoryContainer
   m_TagString: Untagged
@@ -626,6 +627,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1563338003}
   m_CullTransparentMesh: 1
+--- !u!114 &1563338008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563338003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc46781f92192e146b7dc4075776942e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
+  slotPrefab: {fileID: 1878435487641731276, guid: 419ba50f19820d44b9ada85951c2ef86, type: 3}
+  initialSlots: 8
 --- !u!1 &2062424461
 GameObject:
   m_ObjectHideFlags: 0
