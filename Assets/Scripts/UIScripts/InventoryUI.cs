@@ -3,8 +3,12 @@ using UnityEngine;
 public class InventoryUI : MonoBehaviour
 {
     [Header("UI")]
-    [Tooltip("Slot UI Prefab")]
+
+    [Tooltip("Slot UI Cell")]
     [SerializeField] private GameObject slotPrefab;
+
+    [Tooltip("visual UI Item")]
+    [SerializeField] private GameObject itemPrefab;
 
     [SerializeField] private int initialSlots = 8;
 
@@ -20,30 +24,26 @@ public class InventoryUI : MonoBehaviour
         {
             slots[i] = new SlotData();
 
-            GameObject go = Instantiate(slotPrefab, transform);
-
-            SlotUI slotUI = go.GetComponent<SlotUI>();
-            slotUI.Init(this, i);
+            Instantiate(slotPrefab, transform);
         }
     }
 
     public bool AddItem(ItemData item, int amount)
     {
-        // 1️⃣ Intentar stackear primero
         if (item.stackable)
         {
             for (int i = 0; i < currentSlots; i++)
             {
                 if (slots[i].HasItem && slots[i].item == item)
                 {
-                    int espacio = item.maxStack - slots[i].amount;
+                    int space = item.maxStack - slots[i].amount;
 
-                    if (espacio > 0)
+                    if (space > 0)
                     {
-                        int agregar = Mathf.Min(espacio, amount);
+                        int add = Mathf.Min(space, amount);
 
-                        slots[i].amount += agregar;
-                        amount -= agregar;
+                        slots[i].amount += add;
+                        amount -= add;
 
                         UpdateSlotUI(i);
 
@@ -54,28 +54,29 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < currentSlots; i++)
+        while (amount > 0)
         {
-            if (!slots[i].HasItem)
+            int index = FindFreeSlot();
+
+            if (index == -1)
             {
-                int agregar = item.stackable
-                    ? Mathf.Min(item.maxStack, amount)
-                    : 1;
-
-                slots[i].item = item;
-                slots[i].amount= agregar;
-
-                amount-= agregar;
-
-                UpdateSlotUI(i);
-
-                if (amount<= 0)
-                    return true;
+                Debug.Log("Inventario lleno o sin espacio suficiente");
+                return false;
             }
+
+            int add = item.stackable
+                ? Mathf.Min(item.maxStack, amount)
+                : 1;
+
+            slots[index].item = item;
+            slots[index].amount = add;
+
+            amount -= add;
+
+            UpdateSlotUI(index);
         }
 
-        Debug.Log("Inventario lleno o sin espacio suficiente");
-        return false;
+        return true;
     }
 
     public void RemoveItem(int index)
@@ -111,27 +112,59 @@ public class InventoryUI : MonoBehaviour
         for (int i = currentSlots; i < newTotal; i++)
         {
             newSlots[i] = new SlotData();
-
-            GameObject go = Instantiate(slotPrefab, transform);
-            SlotUI slotUI = go.GetComponent<SlotUI>();
-            slotUI.Init(this, i);
+            Instantiate(slotPrefab, transform);
         }
 
         slots = newSlots;
         currentSlots = newTotal;
     }
 
-  
+
     public void UpdateSlotUI(int index)
     {
         if (!IsValidIndex(index)) return;
 
-        Transform slotTransform = transform.GetChild(index);
-        SlotUI slotUI = slotTransform.GetComponent<SlotUI>();
-        slotUI.UpdateUI();
+        Transform slot = transform.GetChild(index);
+
+        if (slot.childCount > 0)
+        {
+            Destroy(slot.GetChild(0).gameObject);
+        }
+
+        if (!slots[index].HasItem) return;
+
+        GameObject itemGO = Instantiate(itemPrefab, slot);
+
+        ItemUI itemUI = itemGO.GetComponent<ItemUI>();
+        itemUI.Setup(slots[index].item, slots[index].amount);
     }
 
-   
+    public bool ConsumeItem(ItemData item, int amount)
+    {
+        for (int i = 0; i < currentSlots; i++)
+        {
+            if (slots[i].HasItem && slots[i].item == item)
+            {
+                if (slots[i].amount >= amount)
+                {
+                    slots[i].amount -= amount;
+
+                    if (slots[i].amount <= 0)
+                    {
+                        slots[i] = new SlotData();
+                    }
+
+                    UpdateSlotUI(i);
+                    return true;
+                }
+            }
+        }
+
+        Debug.Log("Its Empty or not enought amount");
+        return false;
+    }
+
+
     // TESTING
 
     public SlotData GetSlot(int index)
@@ -140,7 +173,6 @@ public class InventoryUI : MonoBehaviour
         return slots[index];
     }
 
-   
     private bool IsValidIndex(int index)
     {
         return index >= 0 && index < currentSlots;
@@ -150,6 +182,20 @@ public class InventoryUI : MonoBehaviour
     [ContextMenu("TESTING")]
     public void Test()
     {
-        AddItem(testItem, 10);
+        AddItem(testItem, 1);
+    }
+
+    // vacia el slot en indice
+    [ContextMenu("TESTING REMOVE")]
+    private void TestRemove()
+    {
+        RemoveItem(0);
+    }
+
+    // busca el item usado y lo consume
+    [ContextMenu("TESTING CONSUME")]
+    private void TestConsume()
+    {
+        ConsumeItem(testItem, 1);
     }
 }

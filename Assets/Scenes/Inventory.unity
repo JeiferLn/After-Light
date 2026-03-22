@@ -562,7 +562,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 182.35, y: -195.00003}
+  m_AnchoredPosition: {x: 0.000015259, y: -0.000015259}
   m_SizeDelta: {x: 764.701, y: 690}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1563338005
@@ -640,7 +640,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
   slotPrefab: {fileID: 1878435487641731276, guid: 419ba50f19820d44b9ada85951c2ef86, type: 3}
+  itemPrefab: {fileID: 2697902489573160056, guid: 930a01461d6683243bb24b34a34636b2, type: 3}
   initialSlots: 8
+  testItem: {fileID: 11400000, guid: 6181c9415036e444e9f0e1b8fddf7aef, type: 2}
 --- !u!1 &2062424461
 GameObject:
   m_ObjectHideFlags: 0
