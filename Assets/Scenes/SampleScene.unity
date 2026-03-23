@@ -731,7 +731,7 @@ MonoBehaviour:
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
-        AccelTime: 0.2
+        AccelTime: 0.1
         DecelTime: 0.2
     - Name: Look Orbit Y
       Owner: {fileID: 674465820}
@@ -742,7 +742,7 @@ MonoBehaviour:
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
-        AccelTime: 0.2
+        AccelTime: 0.1
         DecelTime: 0.2
     - Name: Orbit Scale
       Owner: {fileID: 674465820}

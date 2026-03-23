@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 3f;
+    [SerializeField] private float rotationSharpness = 10f;
 
     private Vector2 currentInput;
     private Vector3 movement;
@@ -16,14 +17,13 @@ public class PlayerController : MonoBehaviour
 
     private const float GroundedStickForce = -2f;
     private const float MinMoveSqrMagnitude = 0.01f;
-    private const float RotationMultiplier = 100f;
 
     public PlayerStatus PlayerStatus { get { return playerStatus; } set { playerStatus = value; } }
 
     public void SetMovement(Vector2 input)
     {
         currentInput = input;
-        PlayerStatus = PlayerStatus.Walking;
+        PlayerStatus = input.sqrMagnitude > MinMoveSqrMagnitude ? PlayerStatus.Walking : PlayerStatus.Idle;
     }
 
     void Awake()
@@ -43,14 +43,14 @@ public class PlayerController : MonoBehaviour
         ApplyMovement();
     }
 
-    void CalculateMovement()
+    private void CalculateMovement()
     {
         GetCameraPlanarAxes(out Vector3 forward, out Vector3 right);
         movement = forward * currentInput.y + right * currentInput.x;
         movement = Vector3.ClampMagnitude(movement, 1f);
     }
 
-    void ApplyMovement()
+    private void ApplyMovement()
     {
         ApplyGravity();
         HandleRotation();
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         characterController.Move(finalMove * Time.deltaTime);
     }
 
-    void ApplyGravity()
+    private void ApplyGravity()
     {
         if (characterController.isGrounded && yVelocity < 0)
         {
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
         yVelocity += gravity * Time.deltaTime;
     }
 
-    void HandleRotation()
+    private void HandleRotation()
     {
         if (PlayerStatus == PlayerStatus.Aiming)
         {
@@ -81,7 +81,7 @@ public class PlayerController : MonoBehaviour
         HandleDefaultRotation();
     }
 
-    void HandleAimingRotation()
+    private void HandleAimingRotation()
     {
         Vector3 aimDirection = cameraTransform.forward;
         aimDirection.y = 0f;
@@ -92,20 +92,13 @@ public class PlayerController : MonoBehaviour
         RotateTowards(aimDirection);
     }
 
-    void HandleDefaultRotation()
+    private void HandleDefaultRotation()
     {
         if (movement.sqrMagnitude > MinMoveSqrMagnitude)
         {
-            GetCameraPlanarAxes(out Vector3 forward, out Vector3 right);
+            Vector3 lookDirection = movement;
 
-            float forwardInput = Mathf.Max(0f, currentInput.y);
-
-            Vector3 lookDirection = forward * forwardInput + right * currentInput.x;
-
-            if (lookDirection.sqrMagnitude > MinMoveSqrMagnitude)
-            {
-                RotateTowards(lookDirection);
-            }
+            RotateTowards(lookDirection);
         }
         else
         {
@@ -113,7 +106,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void GetCameraPlanarAxes(out Vector3 forward, out Vector3 right)
+    private void GetCameraPlanarAxes(out Vector3 forward, out Vector3 right)
     {
         forward = cameraTransform.forward;
         right = cameraTransform.right;
@@ -125,14 +118,14 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
     }
 
-    void RotateTowards(Vector3 direction)
+    private void RotateTowards(Vector3 direction)
     {
         Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
 
-        transform.rotation = Quaternion.RotateTowards(
+        transform.rotation = Quaternion.Slerp(
             transform.rotation,
             targetRotation,
-            rotationSpeed * RotationMultiplier * Time.deltaTime
+            1 - Mathf.Exp(-rotationSharpness * Time.deltaTime)
         );
     }
 }
