@@ -4,8 +4,6 @@ using Unity.Cinemachine;
 
 public class InputsController : MonoBehaviour
 {
-    [SerializeField] private CinemachineCamera normalCamera;
-    [SerializeField] private CinemachineCamera aimCamera;
     private PlayerController playerController;
 
     void Awake()
@@ -23,19 +21,13 @@ public class InputsController : MonoBehaviour
 
     public void OnAimInput(InputAction.CallbackContext context)
     {
-        if (playerController == null) return;
-
         if (context.performed)
         {
             playerController.PlayerStatus = PlayerStatus.Aiming;
-            aimCamera.Priority = 20;
-            normalCamera.Priority = 10;
         }
         else if (context.canceled)
         {
             playerController.PlayerStatus = PlayerStatus.Idle;
-            aimCamera.Priority = 10;
-            normalCamera.Priority = 20;
         }
     }
 }
