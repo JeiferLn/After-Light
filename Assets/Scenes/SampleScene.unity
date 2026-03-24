@@ -193,7 +193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0adfd79aeb9f54085b20f86f027f2879, type: 3}
       propertyPath: m_Name
-      value: Phasmaphobia_Semi
+      value: House
       objectReference: {fileID: 0}
     - target: {fileID: 5148817236446094103, guid: 0adfd79aeb9f54085b20f86f027f2879, type: 3}
       propertyPath: m_IsActive
@@ -1092,6 +1092,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e6052b7e-14d5-4381-b2ec-c0d7bdc4cb86
     m_ActionName: 'Player/Aim[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnInventoryInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: fc0d58b8-5949-436d-91d6-614576da4bc8
+    m_ActionName: 'Player/Inventory[/Keyboard/tab]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnMoveSectionInventoryInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 68d8a6c9-d4e0-4025-bc36-7a6cb5347ba8
+    m_ActionName: 'Player/MoveSectionInventory[/Keyboard/e,/Keyboard/q]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

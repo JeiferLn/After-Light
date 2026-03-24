@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,5 +27,24 @@ public class InputsController : MonoBehaviour
 
         Vector2 input = context.ReadValue<Vector2>();
         cameraController.SetLook(input);
+    }
+
+    public void OnInventoryInput(InputAction.CallbackContext context)
+    {
+        if (context.performed && playerController.PlayerStatus != PlayerStatus.Inventory)
+        {
+            playerController.PlayerStatus = PlayerStatus.Inventory;
+            return;
+        }
+
+        playerController.PlayerStatus = PlayerStatus.Idle;
+    }
+
+    public void OnMoveSectionInventoryInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            // Logica para moverse en la seccion de inventario
+        }
     }
 }
