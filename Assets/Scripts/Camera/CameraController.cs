@@ -15,6 +15,16 @@ public class CameraController : MonoBehaviour
 
     public float HorizontalYaw => yaw;
 
+    /// <summary>Vertical look angle in degrees (same range as min/max pitch). Used by Cinemachine Pan Tilt while aiming.</summary>
+    public float PitchDegrees => pitch;
+
+    public float MinPitchDegrees => minPitch;
+    public float MaxPitchDegrees => maxPitch;
+
+    /// <summary>When true, follow target stays yaw-only and Cinemachine Pan Tilt applies pitch (OTS aim).</summary>
+    public bool UsesAimPitchViaPanTilt =>
+        playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming;
+
     public void SetLook(Vector2 input)
     {
         currentLook = input;
@@ -37,6 +47,14 @@ public class CameraController : MonoBehaviour
         yaw += currentLook.x * rotationSpeed;
         pitch = Mathf.Clamp(pitch - currentLook.y * rotationSpeed, minPitch, maxPitch);
 
-        transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up) * Quaternion.AngleAxis(pitch, Vector3.right);
+        if (UsesAimPitchViaPanTilt)
+        {
+            // Aiming: yaw-only on follow target; pitch via CinemachineThirdPersonTiltSync + Pan Tilt.
+            transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up);
+        }
+        else
+        {
+            transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up) * Quaternion.AngleAxis(pitch, Vector3.right);
+        }
     }
 }
