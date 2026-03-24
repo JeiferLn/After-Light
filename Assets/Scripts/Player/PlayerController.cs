@@ -3,11 +3,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private CharacterController characterController;
+    private CameraController cameraController;
+    private Animator animator;
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSharpness = 10f;
-    private CameraController cameraController;
+    [SerializeField] private float animatorLocomotionSmoothTime = 0.12f;
     private Vector2 currentInput;
+    private Vector2 smoothedAnimatorInput;
+    private Vector2 animatorSmoothVelocity;
     private Vector3 movement;
     private float gravity = -9.81f;
     private float yVelocity;
@@ -21,13 +25,17 @@ public class PlayerController : MonoBehaviour
     public void SetMovement(Vector2 input)
     {
         currentInput = input;
-        PlayerStatus = input.sqrMagnitude > MinMoveSqrMagnitude ? PlayerStatus.Walking : PlayerStatus.Idle;
+        if (input.sqrMagnitude > MinMoveSqrMagnitude)
+            PlayerStatus = PlayerStatus.Walking;
+        else
+            PlayerStatus = PlayerStatus.Idle;
     }
 
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         cameraController = GetComponentInChildren<CameraController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     void Start()
@@ -39,7 +47,25 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CalculateMovement();
+        UpdateSmoothedAnimatorParameters();
         ApplyMovement();
+    }
+
+    private void UpdateSmoothedAnimatorParameters()
+    {
+        if (animator == null)
+            return;
+
+        Vector2 target = currentInput.sqrMagnitude > MinMoveSqrMagnitude ? currentInput : Vector2.zero;
+        float smooth = Mathf.Max(0.0001f, animatorLocomotionSmoothTime);
+        smoothedAnimatorInput = Vector2.SmoothDamp(
+            smoothedAnimatorInput,
+            target,
+            ref animatorSmoothVelocity,
+            smooth);
+
+        animator.SetFloat("Horizontal", smoothedAnimatorInput.x);
+        animator.SetFloat("Vertical", smoothedAnimatorInput.y);
     }
 
     private void CalculateMovement()
@@ -95,9 +121,13 @@ public class PlayerController : MonoBehaviour
     {
         if (movement.sqrMagnitude > MinMoveSqrMagnitude)
         {
-            Vector3 lookDirection = movement;
+            Vector3 faceDirection = GetPlanarForwardFromCameraYaw();
+            faceDirection.y = 0f;
 
-            RotateTowards(lookDirection);
+            if (faceDirection.sqrMagnitude < MinMoveSqrMagnitude)
+                return;
+
+            RotateTowards(faceDirection);
         }
         else
         {
