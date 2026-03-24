@@ -4,10 +4,9 @@ public class PlayerController : MonoBehaviour
 {
     private CharacterController characterController;
 
-    [SerializeField] private Transform cameraTransform;
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSharpness = 10f;
-
+    private CameraController cameraController;
     private Vector2 currentInput;
     private Vector3 movement;
     private float gravity = -9.81f;
@@ -28,6 +27,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        cameraController = GetComponentInChildren<CameraController>();
     }
 
     void Start()
@@ -82,7 +82,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAimingRotation()
     {
-        Vector3 aimDirection = cameraTransform.forward;
+        Vector3 aimDirection = GetPlanarForwardFromCameraYaw();
         aimDirection.y = 0f;
 
         if (aimDirection.sqrMagnitude < MinMoveSqrMagnitude)
@@ -107,14 +107,24 @@ public class PlayerController : MonoBehaviour
 
     private void GetCameraPlanarAxes(out Vector3 forward, out Vector3 right)
     {
-        forward = cameraTransform.forward;
-        right = cameraTransform.right;
+        forward = GetPlanarForwardFromCameraYaw();
+        right = Vector3.Cross(Vector3.up, forward).normalized;
+    }
 
+    private Vector3 GetPlanarForwardFromCameraYaw()
+    {
+        if (cameraController != null)
+        {
+            Quaternion yawOnly = Quaternion.AngleAxis(cameraController.HorizontalYaw, Vector3.up);
+            Vector3 f = yawOnly * Vector3.forward;
+            f.y = 0f;
+            return f.sqrMagnitude > MinMoveSqrMagnitude ? f.normalized : Vector3.forward;
+        }
+
+        Transform rig = transform.childCount > 0 ? transform.GetChild(0) : transform;
+        Vector3 forward = rig.forward;
         forward.y = 0f;
-        right.y = 0f;
-
-        forward.Normalize();
-        right.Normalize();
+        return forward.sqrMagnitude > MinMoveSqrMagnitude ? forward.normalized : Vector3.forward;
     }
 
     private void RotateTowards(Vector3 direction)
@@ -126,5 +136,9 @@ public class PlayerController : MonoBehaviour
             targetRotation,
             1 - Mathf.Exp(-rotationSharpness * Time.deltaTime)
         );
+
+        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
     }
+
 }
+

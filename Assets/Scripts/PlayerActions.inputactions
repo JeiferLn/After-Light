@@ -16,9 +16,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Aiming",
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "7cb7fe4e-53d1-4cd7-ae5c-d955ea2e814f",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Aim",
                     "type": "Button",
-                    "id": "721ede13-d44e-4f2b-b4ac-ebb63df1941f",
+                    "id": "e6052b7e-14d5-4381-b2ec-c0d7bdc4cb86",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -83,12 +92,23 @@
                 },
                 {
                     "name": "",
-                    "id": "aaad1d54-f0b0-4207-a160-6e6ba884a32f",
+                    "id": "ca7454e4-b854-45a5-82eb-d904911bdf27",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4012b43e-cc0f-4fae-8515-a414476b75d5",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Aiming",
+                    "action": "Aim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
