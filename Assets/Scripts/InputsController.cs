@@ -20,23 +20,11 @@ public class InputsController : MonoBehaviour
         playerController.SetMovement(input);
     }
 
-    public void OnLookInput(InputAction.CallbackContext context){
+    public void OnLookInput(InputAction.CallbackContext context)
+    {
         if (cameraController == null) return;
 
         Vector2 input = context.ReadValue<Vector2>();
         cameraController.SetLook(input);
-    }
-
-
-    public void OnAimInput(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            playerController.PlayerStatus = PlayerStatus.Aiming;
-        }
-        else if (context.canceled)
-        {
-            playerController.PlayerStatus = PlayerStatus.Idle;
-        }
     }
 }
