@@ -1,15 +1,18 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private CinemachineCamera normalCamera;
+    [SerializeField] private CinemachineCamera aimCamera;
+
     [Header("Rotation")]
     [SerializeField] private float rotationSpeed = 0.2f;
     [SerializeField] private float minPitch = -40f;
     [SerializeField] private float maxPitch = 40f;
 
-    [Header("Offset")]
-    [SerializeField] private Vector3 cameraOffset = new Vector3(0.3f, 2.5f, 0f);
-
+    private PlayerController playerController;
     private Vector2 currentLook;
     private float yaw;
     private float pitch;
@@ -23,6 +26,8 @@ public class CameraController : MonoBehaviour
 
     void Awake()
     {
+        playerController = GetComponentInParent<PlayerController>();
+
         Vector3 e = transform.eulerAngles;
         yaw = e.y;
         pitch = e.x;
@@ -32,13 +37,26 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        // 🎮 ROTACIÓN (igual que antes)
         yaw += currentLook.x * rotationSpeed;
         pitch = Mathf.Clamp(pitch - currentLook.y * rotationSpeed, minPitch, maxPitch);
-
-        transform.localPosition = cameraOffset;
 
         Quaternion yawRotation = Quaternion.AngleAxis(yaw, Vector3.up);
         Quaternion pitchRotation = Quaternion.AngleAxis(pitch, Vector3.right);
         transform.rotation = yawRotation * pitchRotation;
+
+        // 🎯 CAMBIO DE CÁMARA
+        bool aiming = playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming;
+
+        if (aiming)
+        {
+            aimCamera.Priority = 20;
+            normalCamera.Priority = 10;
+        }
+        else
+        {
+            aimCamera.Priority = 10;
+            normalCamera.Priority = 20;
+        }
     }
 }

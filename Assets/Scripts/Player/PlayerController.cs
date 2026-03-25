@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float aimMoveSpeedMultiplier = 0.2f;
     [SerializeField] private float rotationSharpness = 10f;
     [SerializeField] private float animatorLocomotionSmoothTime = 0.12f;
     private Vector2 currentInput;
@@ -25,6 +26,10 @@ public class PlayerController : MonoBehaviour
     public void SetMovement(Vector2 input)
     {
         currentInput = input;
+
+        if (PlayerStatus == PlayerStatus.Aiming)
+            return;
+
         if (input.sqrMagnitude > MinMoveSqrMagnitude)
             PlayerStatus = PlayerStatus.Walking;
         else
@@ -46,9 +51,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        SyncWalkingFromInputWhenNotAimingOrInventory();
         CalculateMovement();
         UpdateSmoothedAnimatorParameters();
         ApplyMovement();
+    }
+
+    void SyncWalkingFromInputWhenNotAimingOrInventory()
+    {
+        if (playerStatus == PlayerStatus.Aiming || playerStatus == PlayerStatus.Inventory)
+            return;
+        if (currentInput.sqrMagnitude > MinMoveSqrMagnitude)
+            playerStatus = PlayerStatus.Walking;
     }
 
     private void UpdateSmoothedAnimatorParameters()
@@ -56,7 +70,10 @@ public class PlayerController : MonoBehaviour
         if (animator == null)
             return;
 
-        Vector2 target = currentInput.sqrMagnitude > MinMoveSqrMagnitude ? currentInput : Vector2.zero;
+        Vector2 target = PlayerStatus == PlayerStatus.Aiming
+            ? Vector2.zero
+            : (currentInput.sqrMagnitude > MinMoveSqrMagnitude ? currentInput : Vector2.zero);
+
         float smooth = Mathf.Max(0.0001f, animatorLocomotionSmoothTime);
         smoothedAnimatorInput = Vector2.SmoothDamp(
             smoothedAnimatorInput,
@@ -80,7 +97,8 @@ public class PlayerController : MonoBehaviour
         ApplyGravity();
         HandleRotation();
 
-        Vector3 finalMove = movement * moveSpeed;
+        float speedMul = playerStatus == PlayerStatus.Aiming ? aimMoveSpeedMultiplier : 1f;
+        Vector3 finalMove = movement * moveSpeed * speedMul;
         finalMove.y = yVelocity;
         characterController.Move(finalMove * Time.deltaTime);
     }

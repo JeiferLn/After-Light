@@ -29,6 +29,18 @@ public class InputsController : MonoBehaviour
         cameraController.SetLook(input);
     }
 
+
+    public void OnAimInput(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            playerController.PlayerStatus = PlayerStatus.Aiming;
+            return;
+        }
+
+        playerController.PlayerStatus = PlayerStatus.Idle;
+    }
+
     public void OnInventoryInput(InputAction.CallbackContext context)
     {
         if (context.performed && playerController.PlayerStatus != PlayerStatus.Inventory)
