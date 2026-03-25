@@ -436,7 +436,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.58495, y: -1.09332, z: -16.41412}
+  m_LocalPosition: {x: 20.511591, y: -1.047946, z: -16.313736}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -938,7 +938,10 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 72b2f6f5ebb0d4f5ba264652c20343dd, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6515712193588681746, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1706491802}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       insertIndex: -1
@@ -1096,7 +1099,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1706491802}
   - {fileID: 537490578}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1267,12 +1269,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1706491801}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3, y: 2.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.17850782, y: -0.17917247, z: 0.022784134, w: 0.96721923}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.019999998, y: 0.020000003, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1284403019}
+  m_Father: {fileID: 2000713879}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1706491803
 MonoBehaviour:
@@ -1289,7 +1291,7 @@ MonoBehaviour:
   rotationSpeed: 0.2
   minPitch: -40
   maxPitch: 40
-  cameraOffset: {x: 0.3, y: 2.5, z: 0}
+  cameraOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &1831614071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1317,7 +1319,7 @@ Transform:
   m_GameObject: {fileID: 1831614071}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.58495, y: -1.09332, z: -16.41412}
+  m_LocalPosition: {x: 20.511591, y: -1.047946, z: -16.313736}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1336,8 +1338,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0.5, y: 0, z: 0}
-  VerticalArmLength: 0
+  ShoulderOffset: {x: 0.7, y: 0, z: 0}
+  VerticalArmLength: 0.2
   CameraSide: 1
   CameraDistance: 2
   AvoidObstacles:
@@ -1392,6 +1394,11 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
+--- !u!4 &2000713879 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6515712193588681746, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
+  m_PrefabInstance: {fileID: 911333418}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2116880640 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8343248219658952724, guid: 0adfd79aeb9f54085b20f86f027f2879, type: 3}
