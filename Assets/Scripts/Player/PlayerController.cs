@@ -7,9 +7,13 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float aimMoveSpeedMultiplier = 0.2f;
     [SerializeField] private float rotationSharpness = 10f;
     [SerializeField] private float animatorLocomotionSmoothTime = 0.12f;
+
+    [Header("Move speed multipliers")]
+    [SerializeField][Range(0.05f, 1f)] private float aimMoveSpeedMultiplier = 0.3f;
+    [SerializeField][Range(0.05f, 1f)] private float crouchMoveSpeedMultiplier = 0.5f;
+    [SerializeField][Range(0.05f, 1f)] private float crouchAimMoveSpeedMultiplier = 0.2f;
     private Vector2 currentInput;
     private Vector2 smoothedAnimatorInput;
     private Vector2 animatorSmoothVelocity;
@@ -21,13 +25,20 @@ public class PlayerController : MonoBehaviour
     private const float GroundedStickForce = -2f;
     private const float MinMoveSqrMagnitude = 0.01f;
 
+    private static bool IsAimingStatus(PlayerStatus s) =>
+        s == PlayerStatus.Aiming || s == PlayerStatus.CrounchAiming;
+
     public PlayerStatus PlayerStatus { get { return playerStatus; } set { playerStatus = value; } }
 
     public void SetMovement(Vector2 input)
     {
         currentInput = input;
 
-        if (PlayerStatus == PlayerStatus.Aiming)
+        if (IsAimingStatus(PlayerStatus))
+            return;
+
+        // No pisar agachado: el toggle lo controla InputsController.
+        if (PlayerStatus == PlayerStatus.Crounched)
             return;
 
         if (input.sqrMagnitude > MinMoveSqrMagnitude)
@@ -59,7 +70,9 @@ public class PlayerController : MonoBehaviour
 
     void SyncWalkingFromInputWhenNotAimingOrInventory()
     {
-        if (playerStatus == PlayerStatus.Aiming || playerStatus == PlayerStatus.Inventory)
+        if (IsAimingStatus(playerStatus) || playerStatus == PlayerStatus.Inventory)
+            return;
+        if (playerStatus == PlayerStatus.Crounched)
             return;
         if (currentInput.sqrMagnitude > MinMoveSqrMagnitude)
             playerStatus = PlayerStatus.Walking;
@@ -70,7 +83,7 @@ public class PlayerController : MonoBehaviour
         if (animator == null)
             return;
 
-        Vector2 target = PlayerStatus == PlayerStatus.Aiming
+        Vector2 target = IsAimingStatus(PlayerStatus)
             ? Vector2.zero
             : (currentInput.sqrMagnitude > MinMoveSqrMagnitude ? currentInput : Vector2.zero);
 
@@ -81,6 +94,7 @@ public class PlayerController : MonoBehaviour
             ref animatorSmoothVelocity,
             smooth);
 
+        animator.SetBool("isCrounched", playerStatus == PlayerStatus.Crounched);
         animator.SetFloat("Horizontal", smoothedAnimatorInput.x);
         animator.SetFloat("Vertical", smoothedAnimatorInput.y);
     }
@@ -97,7 +111,14 @@ public class PlayerController : MonoBehaviour
         ApplyGravity();
         HandleRotation();
 
-        float speedMul = playerStatus == PlayerStatus.Aiming ? aimMoveSpeedMultiplier : 1f;
+        float speedMul = playerStatus switch
+        {
+            PlayerStatus.Aiming => aimMoveSpeedMultiplier,
+            PlayerStatus.Crounched => crouchMoveSpeedMultiplier,
+            PlayerStatus.CrounchAiming => crouchAimMoveSpeedMultiplier,
+            _ => 1f,
+        };
+
         Vector3 finalMove = movement * moveSpeed * speedMul;
         finalMove.y = yVelocity;
         characterController.Move(finalMove * Time.deltaTime);
@@ -115,7 +136,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRotation()
     {
-        if (PlayerStatus == PlayerStatus.Aiming)
+        if (IsAimingStatus(PlayerStatus))
         {
             HandleAimingRotation();
             return;
@@ -147,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
             RotateTowards(faceDirection);
         }
-        else
+        else if (playerStatus == PlayerStatus.Walking)
         {
             PlayerStatus = PlayerStatus.Idle;
         }

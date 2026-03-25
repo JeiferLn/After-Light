@@ -25,6 +25,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Crounch",
+                    "type": "Button",
+                    "id": "e1b5b4a7-d3d1-4bd5-a5d8-6fdf15552c00",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Aim",
                     "type": "Button",
                     "id": "e6052b7e-14d5-4381-b2ec-c0d7bdc4cb86",
@@ -182,6 +191,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "38a50737-911b-4757-a85e-ae1528c9d35e",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crounch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

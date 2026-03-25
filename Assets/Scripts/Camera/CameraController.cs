@@ -45,7 +45,6 @@ public class CameraController : MonoBehaviour
         Quaternion pitchRotation = Quaternion.AngleAxis(pitch, Vector3.right);
         transform.rotation = yawRotation * pitchRotation;
 
-        // 🎯 CAMBIO DE CÁMARA
         bool aiming = playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming;
 
         if (aiming)

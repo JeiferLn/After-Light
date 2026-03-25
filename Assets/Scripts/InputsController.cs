@@ -29,16 +29,39 @@ public class InputsController : MonoBehaviour
         cameraController.SetLook(input);
     }
 
+    public void OnCrounchInput(InputAction.CallbackContext context)
+    {
+        if (playerController == null || !context.performed)
+            return;
+
+        if (playerController.PlayerStatus != PlayerStatus.Crounched)
+            playerController.PlayerStatus = PlayerStatus.Crounched;
+        else
+            playerController.PlayerStatus = PlayerStatus.Idle;
+    }
+
 
     public void OnAimInput(InputAction.CallbackContext context)
     {
+        if (playerController == null)
+            return;
+
+        PlayerStatus current = playerController.PlayerStatus;
+
         if (context.performed)
         {
-            playerController.PlayerStatus = PlayerStatus.Aiming;
+            playerController.PlayerStatus = current == PlayerStatus.Crounched
+                ? PlayerStatus.CrounchAiming
+                : PlayerStatus.Aiming;
             return;
         }
 
-        playerController.PlayerStatus = PlayerStatus.Idle;
+        if (context.canceled)
+        {
+            playerController.PlayerStatus = current == PlayerStatus.CrounchAiming
+                ? PlayerStatus.Crounched
+                : PlayerStatus.Idle;
+        }
     }
 
     public void OnInventoryInput(InputAction.CallbackContext context)
