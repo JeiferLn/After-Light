@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour
     private static bool IsAimingStatus(PlayerStatus s) =>
         s == PlayerStatus.Aiming || s == PlayerStatus.CrounchAiming;
 
+    private static bool IsCrouchedPose(PlayerStatus s) =>
+        s == PlayerStatus.Crounched || s == PlayerStatus.CrounchAiming;
+
     public PlayerStatus PlayerStatus { get { return playerStatus; } set { playerStatus = value; } }
 
     public void SetMovement(Vector2 input)
@@ -62,10 +65,24 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        PromoteCrouchAimToStandingAimIfMoving();
         SyncWalkingFromInputWhenNotAimingOrInventory();
         CalculateMovement();
         UpdateSmoothedAnimatorParameters();
         ApplyMovement();
+    }
+
+    /// <summary>
+    /// Agachado + apuntar quieto = sigue en CrounchAiming. Si mueves, pasa a Aiming de pie (misma lógica que apuntar y caminar: idle en animación).
+    /// </summary>
+    void PromoteCrouchAimToStandingAimIfMoving()
+    {
+        if (playerStatus != PlayerStatus.CrounchAiming)
+            return;
+        if (currentInput.sqrMagnitude <= MinMoveSqrMagnitude)
+            return;
+
+        playerStatus = PlayerStatus.Aiming;
     }
 
     void SyncWalkingFromInputWhenNotAimingOrInventory()
@@ -87,14 +104,22 @@ public class PlayerController : MonoBehaviour
             ? Vector2.zero
             : (currentInput.sqrMagnitude > MinMoveSqrMagnitude ? currentInput : Vector2.zero);
 
-        float smooth = Mathf.Max(0.0001f, animatorLocomotionSmoothTime);
-        smoothedAnimatorInput = Vector2.SmoothDamp(
-            smoothedAnimatorInput,
-            target,
-            ref animatorSmoothVelocity,
-            smooth);
+        if (PlayerStatus == PlayerStatus.CrounchAiming)
+        {
+            smoothedAnimatorInput = Vector2.zero;
+            animatorSmoothVelocity = Vector2.zero;
+        }
+        else
+        {
+            float smooth = Mathf.Max(0.0001f, animatorLocomotionSmoothTime);
+            smoothedAnimatorInput = Vector2.SmoothDamp(
+                smoothedAnimatorInput,
+                target,
+                ref animatorSmoothVelocity,
+                smooth);
+        }
 
-        animator.SetBool("isCrounched", playerStatus == PlayerStatus.Crounched);
+        animator.SetBool("isCrounched", IsCrouchedPose(playerStatus));
         animator.SetFloat("Horizontal", smoothedAnimatorInput.x);
         animator.SetFloat("Vertical", smoothedAnimatorInput.y);
     }

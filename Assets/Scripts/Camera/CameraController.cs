@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour
         Quaternion pitchRotation = Quaternion.AngleAxis(pitch, Vector3.right);
         transform.rotation = yawRotation * pitchRotation;
 
-        bool aiming = playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming;
+        bool aiming = playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming || playerController.PlayerStatus == PlayerStatus.CrounchAiming;
 
         if (aiming)
         {
