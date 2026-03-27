@@ -25,6 +25,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "91078ce4-2e94-4e09-a189-1b4c3101af1a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Crounch",
                     "type": "Button",
                     "id": "e1b5b4a7-d3d1-4bd5-a5d8-6fdf15552c00",
@@ -202,6 +211,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Crounch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0ee1751-28bc-47e8-ba5f-20e66984423a",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

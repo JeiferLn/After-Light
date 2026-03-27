@@ -6,21 +6,35 @@ public class PlayerController : MonoBehaviour
     private CameraController cameraController;
     private Animator animator;
 
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float runSpeedOutsideCombat = 5f;
+    [SerializeField] private float runSpeedInCombat = 8f;
     [SerializeField] private float rotationSharpness = 10f;
     [SerializeField] private float animatorLocomotionSmoothTime = 0.12f;
+    [SerializeField][Range(0.01f, 1f)] private float animatorSpeedSmoothTime = 0.18f;
 
     [Header("Move speed multipliers")]
     [SerializeField][Range(0.05f, 1f)] private float aimMoveSpeedMultiplier = 0.3f;
     [SerializeField][Range(0.05f, 1f)] private float crouchMoveSpeedMultiplier = 0.5f;
     [SerializeField][Range(0.05f, 1f)] private float crouchAimMoveSpeedMultiplier = 0.2f;
+
+    [Header("Animator locomotion Speed")]
+    [SerializeField][Range(0f, 1f)] private float animatorSpeedWalk = 0.3f;
+    [SerializeField][Range(0f, 1f)] private float animatorSpeedRunExploration = 0.6f;
+    [SerializeField][Range(0f, 1f)] private float animatorSpeedRunCombat = 1f;
+
     private Vector2 currentInput;
+    private bool sprintHeld;
+    private float locomotionSpeedTarget;
+    private float smoothedAnimatorSpeed;
+    private float animatorSpeedSmoothVelocity;
     private Vector2 smoothedAnimatorInput;
     private Vector2 animatorSmoothVelocity;
     private Vector3 movement;
     private float gravity = -9.81f;
     private float yVelocity;
     private PlayerStatus playerStatus;
+    private GameStatus gameStatus;
 
     private const float GroundedStickForce = -2f;
     private const float MinMoveSqrMagnitude = 0.01f;
@@ -33,21 +47,49 @@ public class PlayerController : MonoBehaviour
 
     public PlayerStatus PlayerStatus { get { return playerStatus; } set { playerStatus = value; } }
 
-    public void SetMovement(Vector2 input)
+    public void SetMovementInput(Vector2 input)
     {
         currentInput = input;
+    }
 
-        if (IsAimingStatus(PlayerStatus))
+    public void SetSprint(bool sprintHeld)
+    {
+        this.sprintHeld = sprintHeld;
+    }
+
+    void SyncLocomotionFromInput()
+    {
+        if (IsAimingStatus(playerStatus) || playerStatus == PlayerStatus.Inventory)
+        {
+            locomotionSpeedTarget = smoothedAnimatorSpeed;
             return;
+        }
 
-        // No pisar agachado: el toggle lo controla InputsController.
-        if (PlayerStatus == PlayerStatus.Crounched)
+        if (playerStatus == PlayerStatus.Crounched)
+        {
+            locomotionSpeedTarget = smoothedAnimatorSpeed;
             return;
+        }
 
-        if (input.sqrMagnitude > MinMoveSqrMagnitude)
-            PlayerStatus = PlayerStatus.Walking;
+        bool hasMovement = currentInput.sqrMagnitude > MinMoveSqrMagnitude;
+
+        if (!hasMovement)
+        {
+            playerStatus = PlayerStatus.Idle;
+            locomotionSpeedTarget = 0f;
+            return;
+        }
+
+        if (sprintHeld)
+        {
+            playerStatus = PlayerStatus.Running;
+            locomotionSpeedTarget = gameStatus == GameStatus.Combat ? animatorSpeedRunCombat : animatorSpeedRunExploration;
+        }
         else
-            PlayerStatus = PlayerStatus.Idle;
+        {
+            playerStatus = PlayerStatus.Walking;
+            locomotionSpeedTarget = animatorSpeedWalk;
+        }
     }
 
     void Awake()
@@ -66,15 +108,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         PromoteCrouchAimToStandingAimIfMoving();
-        SyncWalkingFromInputWhenNotAimingOrInventory();
+        SyncLocomotionFromInput();
         CalculateMovement();
         UpdateSmoothedAnimatorParameters();
         ApplyMovement();
     }
 
-    /// <summary>
-    /// Agachado + apuntar quieto = sigue en CrounchAiming. Si mueves, pasa a Aiming de pie (misma lógica que apuntar y caminar: idle en animación).
-    /// </summary>
     void PromoteCrouchAimToStandingAimIfMoving()
     {
         if (playerStatus != PlayerStatus.CrounchAiming)
@@ -83,16 +122,6 @@ public class PlayerController : MonoBehaviour
             return;
 
         playerStatus = PlayerStatus.Aiming;
-    }
-
-    void SyncWalkingFromInputWhenNotAimingOrInventory()
-    {
-        if (IsAimingStatus(playerStatus) || playerStatus == PlayerStatus.Inventory)
-            return;
-        if (playerStatus == PlayerStatus.Crounched)
-            return;
-        if (currentInput.sqrMagnitude > MinMoveSqrMagnitude)
-            playerStatus = PlayerStatus.Walking;
     }
 
     private void UpdateSmoothedAnimatorParameters()
@@ -119,9 +148,17 @@ public class PlayerController : MonoBehaviour
                 smooth);
         }
 
-        animator.SetBool("isCrounched", IsCrouchedPose(playerStatus));
-        animator.SetFloat("Horizontal", smoothedAnimatorInput.x);
-        animator.SetFloat("Vertical", smoothedAnimatorInput.y);
+        animator.SetBool("IsCrouching", IsCrouchedPose(playerStatus));
+        animator.SetFloat("MoveX", smoothedAnimatorInput.x);
+        animator.SetFloat("MoveY", smoothedAnimatorInput.y);
+
+        float speedSmooth = Mathf.Max(0.0001f, animatorSpeedSmoothTime);
+        smoothedAnimatorSpeed = Mathf.SmoothDamp(
+            smoothedAnimatorSpeed,
+            locomotionSpeedTarget,
+            ref animatorSpeedSmoothVelocity,
+            speedSmooth);
+        animator.SetFloat("Speed", smoothedAnimatorSpeed);
     }
 
     private void CalculateMovement()
@@ -143,6 +180,10 @@ public class PlayerController : MonoBehaviour
             PlayerStatus.CrounchAiming => crouchAimMoveSpeedMultiplier,
             _ => 1f,
         };
+
+        float runSpeed = gameStatus == GameStatus.Combat ? runSpeedInCombat : runSpeedOutsideCombat;
+        float moveSpeed = playerStatus == PlayerStatus.Running ? runSpeed : walkSpeed;
+
 
         Vector3 finalMove = movement * moveSpeed * speedMul;
         finalMove.y = yVelocity;
@@ -193,7 +234,7 @@ public class PlayerController : MonoBehaviour
 
             RotateTowards(faceDirection);
         }
-        else if (playerStatus == PlayerStatus.Walking)
+        else if (playerStatus == PlayerStatus.Walking || playerStatus == PlayerStatus.Running)
         {
             PlayerStatus = PlayerStatus.Idle;
         }

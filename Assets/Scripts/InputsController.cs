@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,7 +17,7 @@ public class InputsController : MonoBehaviour
         if (playerController == null) return;
 
         Vector2 input = context.ReadValue<Vector2>();
-        playerController.SetMovement(input);
+        playerController.SetMovementInput(input);
     }
 
     public void OnLookInput(InputAction.CallbackContext context)
@@ -40,6 +39,12 @@ public class InputsController : MonoBehaviour
             playerController.PlayerStatus = PlayerStatus.Idle;
     }
 
+    public void OnRunInput(InputAction.CallbackContext context)
+    {
+        if (playerController == null) return;
+
+        playerController.SetSprint(context.ReadValueAsButton());
+    }
 
     public void OnAimInput(InputAction.CallbackContext context)
     {
