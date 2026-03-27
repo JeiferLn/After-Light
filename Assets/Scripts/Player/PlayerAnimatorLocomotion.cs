@@ -46,8 +46,12 @@ public sealed class PlayerAnimatorLocomotion
 
         if (playerStatus == PlayerStatus.Crounched)
         {
-            locomotionSpeedTarget = smoothedAnimatorSpeed;
-            return;
+            if (!sprintHeld)
+            {
+                locomotionSpeedTarget = smoothedAnimatorSpeed;
+                return;
+            }
+            // Sprint: levantarse y usar la misma locomoción que de pie (Idle / Walk / Run).
         }
 
         bool hasMovement = currentInput.sqrMagnitude > minMoveSqrMagnitude;

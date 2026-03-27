@@ -1085,12 +1085,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593b0c5ed4d9f44eea29366f62a3ccab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  moveSpeed: 3
+  walkSpeed: 2
+  runSpeedOutsideCombat: 3.5
+  runSpeedInCombat: 6
   rotationSharpness: 10
   animatorLocomotionSmoothTime: 0.12
+  animatorSpeedSmoothTime: 0.18
   aimMoveSpeedMultiplier: 0.3
   crouchMoveSpeedMultiplier: 0.3
   crouchAimMoveSpeedMultiplier: 0.1
+  animatorSpeedWalk: 0.3
+  animatorSpeedRunExploration: 0.6
+  animatorSpeedRunCombat: 1
+  gameStatus: 0
+  gravity: -9.81
 --- !u!114 &1284403022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1224,6 +1232,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e1b5b4a7-d3d1-4bd5-a5d8-6fdf15552c00
     m_ActionName: 'Player/Crounch[/Keyboard/c]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnRunInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 91078ce4-2e94-4e09-a189-1b4c3101af1a
+    m_ActionName: 'Player/Sprint[/Keyboard/shift]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
