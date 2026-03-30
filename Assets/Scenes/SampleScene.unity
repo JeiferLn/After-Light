@@ -436,7 +436,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.419458, y: -1.2355757, z: -16.321766}
+  m_LocalPosition: {x: 12.440668, y: -1.0626569, z: -16.25618}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -664,7 +664,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537490577}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
   m_Controller: {fileID: 9100000, guid: 56094b69a8c9d414d9d3ad1b9e2c9d35, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -672,11 +672,42 @@ Animator:
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
+    are already bound by a Humanoid avatar. These transforms can only be changed
+    by Humanoid clips.\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:LeftFoot'\n\tTransform
+    'mixamorig:LeftHandIndex1'\n\tTransform 'mixamorig:Spine1'\n\tTransform 'mixamorig:LeftToeBase'\n\tTransform
+    'mixamorig:RightArm'\n\tTransform 'mixamorig:LeftLeg'\n\tTransform 'mixamorig:LeftShoulder'\n\tTransform
+    'mixamorig:RightHandIndex3'\n\tTransform 'mixamorig:RightFoot'\n\tand more ...\n\tFrom
+    animation clip 'Jog Forward'\n\tFrom animation clip 'Jog Forward Right'\n\tFrom
+    animation clip 'Jog Strafe Right'\n\tFrom animation clip 'Jog Backward right'\n\tFrom
+    animation clip 'Jog Backward'\n\tFrom animation clip 'Jog Backward Left'\n\tFrom
+    animation clip 'Jog Strafe Left'\n\tFrom animation clip 'Jog Forward Left'\n\tFrom
+    animation clip 'Crouching Idle'\n\tFrom animation clip 'Crouched Walking'\n\tand
+    more ..."
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &537490580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537490577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5e12a56bff24036bf5498cf74de8d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LookController
+  cameraTransform: {fileID: 330585546}
+  lookWeight: 1
+  bodyWeight: 0.2
+  headWeight: 1
+  clampWeight: 0.7
+  lookDistance: 10
+  smoothSpeed: 5
+  maxLookAngle: 80
 --- !u!1 &652030291 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -791446163996568460, guid: 0adfd79aeb9f54085b20f86f027f2879, type: 3}
@@ -874,15 +905,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       propertyPath: m_LocalScale.x
-      value: 46
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       propertyPath: m_LocalScale.y
-      value: 46
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       propertyPath: m_LocalScale.z
-      value: 46
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       propertyPath: m_LocalPosition.x
@@ -950,6 +981,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
       insertIndex: -1
       addedObject: {fileID: 537490579}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 537490580}
   m_SourcePrefab: {fileID: 100100000, guid: e9737429d39c142a2b9da0c2940320ce, type: 3}
 --- !u!1 &1111918574
 GameObject:
@@ -1092,8 +1126,8 @@ MonoBehaviour:
   animatorLocomotionSmoothTime: 0.12
   animatorSpeedSmoothTime: 0.18
   aimMoveSpeedMultiplier: 0.3
-  crouchMoveSpeedMultiplier: 0.3
-  crouchAimMoveSpeedMultiplier: 0.1
+  crouchMoveSpeedMultiplier: 0.5
+  crouchAimMoveSpeedMultiplier: 0.2
   animatorSpeedWalk: 0.3
   animatorSpeedRunExploration: 0.6
   animatorSpeedRunCombat: 1
@@ -1355,7 +1389,7 @@ Transform:
   m_GameObject: {fileID: 1831614071}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12.419458, y: -1.2355757, z: -16.321766}
+  m_LocalPosition: {x: 12.440668, y: -1.0626569, z: -16.25618}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
