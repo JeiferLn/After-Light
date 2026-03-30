@@ -4,6 +4,8 @@ public class LookController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform cameraTransform;
+    [Tooltip("Opcional: si no se asigna, se busca en padres. Si no existe, la mirada IK sigue activa.")]
+    [SerializeField] private PlayerController playerController;
 
     [Header("IK Settings")]
     [SerializeField] private float lookWeight = 1f;
@@ -22,6 +24,8 @@ public class LookController : MonoBehaviour
     void Awake()
     {
         animator = GetComponent<Animator>();
+        if (playerController == null)
+            playerController = GetComponentInParent<PlayerController>();
 
         // Inicializar para evitar saltos raros
         currentLookPosition = transform.position + transform.forward * lookDistance;
@@ -31,14 +35,16 @@ public class LookController : MonoBehaviour
     {
         if (animator == null || cameraTransform == null) return;
 
-        Vector3 target = cameraTransform.position + cameraTransform.forward * lookDistance;
-
-        target.y = Mathf.Max(target.y, transform.position.y + 1.2f);
-
-        if (!IsWithinAngle(target))
+        if (playerController != null && playerController.PlayerStatus == PlayerStatus.Walking)
         {
-            target = transform.position + transform.forward * lookDistance;
+            animator.SetLookAtWeight(0f);
+            return;
         }
+
+        Vector3 rawTarget = cameraTransform.position + cameraTransform.forward * lookDistance;
+        rawTarget.y = Mathf.Max(rawTarget.y, transform.position.y + 1.2f);
+
+        Vector3 target = GetClampedLookTargetPosition(rawTarget);
 
         currentLookPosition = Vector3.Lerp(currentLookPosition, target, Time.deltaTime * smoothSpeed);
 
@@ -46,10 +52,46 @@ public class LookController : MonoBehaviour
         animator.SetLookAtPosition(currentLookPosition);
     }
 
-    private bool IsWithinAngle(Vector3 targetPosition)
+    private Vector3 GetClampedLookTargetPosition(Vector3 rawTarget)
     {
-        Vector3 dir = (targetPosition - transform.position).normalized;
-        float angle = Vector3.Angle(transform.forward, dir);
-        return angle < maxLookAngle;
+        Vector3 origin = transform.position;
+        rawTarget.y = Mathf.Max(rawTarget.y, origin.y + 1.2f);
+
+        Vector3 toTarget = rawTarget - origin;
+        float dist = toTarget.magnitude;
+        if (dist < 1e-4f)
+            return origin + transform.forward * lookDistance;
+
+        Vector3 desired = toTarget / dist;
+
+        Vector3 fwdH = transform.forward;
+        fwdH.y = 0f;
+        if (fwdH.sqrMagnitude < 1e-6f)
+            fwdH = Vector3.forward;
+        fwdH.Normalize();
+
+        Vector3 desiredH = desired;
+        desiredH.y = 0f;
+        float hLenSq = desiredH.sqrMagnitude;
+        if (hLenSq < 1e-8f)
+            return origin + desired * lookDistance;
+
+        desiredH.Normalize();
+
+        float yawAngle = Vector3.Angle(fwdH, desiredH);
+        Vector3 yawDir = desiredH;
+        if (yawAngle > maxLookAngle)
+            yawDir = Vector3.Slerp(fwdH, desiredH, maxLookAngle / yawAngle).normalized;
+
+        float hMag = Mathf.Sqrt(hLenSq);
+        Vector3 newDir = new Vector3(yawDir.x * hMag, desired.y, yawDir.z * hMag);
+        if (newDir.sqrMagnitude < 1e-6f)
+            newDir = yawDir;
+        else
+            newDir.Normalize();
+
+        Vector3 result = origin + newDir * lookDistance;
+        result.y = Mathf.Max(result.y, origin.y + 1.2f);
+        return result;
     }
 }
