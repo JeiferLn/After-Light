@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "ca.tim-cstj.fast-play": {
+      "version": "file:ca.tim-cstj.fast-play",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.boxqkrtm.ide.cursor": {
       "version": "https://github.com/boxqkrtm/com.unity.ide.cursor.git",
       "depth": 0,
