@@ -60,6 +60,7 @@ public class LookController : MonoBehaviour
         if (animator == null || cameraTransform == null) return;
 
         bool walking = playerController != null && playerController.PlayerStatus == PlayerStatus.Walking;
+        bool aiming = playerController != null && PlayerStatusHelpers.IsAimingStatus(playerController.PlayerStatus);
         bool hasInteractable = TryGetInteractableLookPoint(out Vector3 interactPoint);
 
         bool suppressLookIkWhileWalking = walking && !hasInteractable;
@@ -70,6 +71,8 @@ public class LookController : MonoBehaviour
         Vector3 instantGoal;
         if (suppressLookIkWhileWalking)
             instantGoal = GetNeutralLookPoint();
+        else if (aiming)
+            instantGoal = GetAimingPitchOnlyLookPoint();
         else if (hasInteractable)
             instantGoal = interactPoint;
         else
@@ -80,7 +83,9 @@ public class LookController : MonoBehaviour
         float gT = Mathf.Max(0.0001f, goalSmoothTime);
         smoothedGoal = Vector3.SmoothDamp(smoothedGoal, instantGoal, ref goalSmoothVelocity, gT);
 
-        Vector3 target = GetClampedLookTargetPosition(smoothedGoal);
+        Vector3 target = aiming
+            ? GetClampedLookTargetPositionPitchOnly(smoothedGoal)
+            : GetClampedLookTargetPosition(smoothedGoal);
 
         float ikT = Mathf.Max(0.0001f, lookIkSmoothTime);
         currentLookPosition = Vector3.SmoothDamp(currentLookPosition, target, ref lookIkSmoothVelocity, ikT);
@@ -99,6 +104,24 @@ public class LookController : MonoBehaviour
     private Vector3 GetNeutralLookPoint()
     {
         Vector3 p = BodyRoot.position + BodyRoot.forward * lookDistance;
+        p.y = Mathf.Max(p.y, BodyRoot.position.y + 1.2f);
+        return p;
+    }
+
+    private Vector3 GetAimingPitchOnlyLookPoint()
+    {
+        GetHorizontalForward(out Vector3 fwdH);
+        Vector3 right = Vector3.Cross(Vector3.up, fwdH);
+        if (right.sqrMagnitude < 1e-8f) right = Vector3.right;
+        right.Normalize();
+
+        Vector3 camF = cameraTransform.forward;
+        float horizontalMag = new Vector3(camF.x, 0f, camF.z).magnitude;
+        float pitch = Mathf.Atan2(camF.y, Mathf.Max(horizontalMag, 1e-4f));
+        Vector3 lookDir = Quaternion.AngleAxis(-pitch * Mathf.Rad2Deg, right) * fwdH;
+        lookDir.Normalize();
+
+        Vector3 p = BodyRoot.position + lookDir * lookDistance;
         p.y = Mathf.Max(p.y, BodyRoot.position.y + 1.2f);
         return p;
     }
@@ -200,6 +223,36 @@ public class LookController : MonoBehaviour
             newDir.Normalize();
 
         Vector3 result = origin + newDir * lookDistance;
+        result.y = Mathf.Max(result.y, origin.y + 1.2f);
+        return result;
+    }
+
+    private Vector3 GetClampedLookTargetPositionPitchOnly(Vector3 rawTarget)
+    {
+        Vector3 origin = BodyRoot.position;
+        rawTarget.y = Mathf.Max(rawTarget.y, origin.y + 1.2f);
+
+        Vector3 toTarget = rawTarget - origin;
+        if (toTarget.sqrMagnitude < 1e-6f)
+            return GetAimingPitchOnlyLookPoint();
+
+        Vector3 desired = toTarget.normalized;
+
+        GetHorizontalForward(out Vector3 fwdH);
+        Vector3 right = Vector3.Cross(Vector3.up, fwdH);
+        if (right.sqrMagnitude < 1e-8f) right = Vector3.right;
+        right.Normalize();
+
+        Vector3 onPlane = desired - right * Vector3.Dot(desired, right);
+        if (onPlane.sqrMagnitude < 1e-8f)
+            onPlane = fwdH;
+        onPlane.Normalize();
+
+        float angle = Vector3.Angle(fwdH, onPlane);
+        if (angle > maxLookAngle)
+            onPlane = Vector3.Slerp(fwdH, onPlane, maxLookAngle / Mathf.Max(angle, 1e-4f)).normalized;
+
+        Vector3 result = origin + onPlane * lookDistance;
         result.y = Mathf.Max(result.y, origin.y + 1.2f);
         return result;
     }

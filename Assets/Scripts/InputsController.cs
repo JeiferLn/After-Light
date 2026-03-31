@@ -74,7 +74,14 @@ public class InputsController : MonoBehaviour
             if (lookDeadZone > 0f && lookTarget.sqrMagnitude < lookDeadZone * lookDeadZone)
                 lookTarget = Vector2.zero;
 
-            if (lookSmoothTime <= 0f)
+            bool aiming = playerController != null && PlayerStatusHelpers.IsAimingStatus(playerController.PlayerStatus);
+
+            if (aiming)
+            {
+                smoothedLook = lookTarget;
+                lookSmoothVelocity = Vector2.zero;
+            }
+            else if (lookSmoothTime <= 0f)
             {
                 smoothedLook = lookTarget;
                 lookSmoothVelocity = Vector2.zero;

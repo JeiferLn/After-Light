@@ -17,14 +17,14 @@ public sealed class PlayerRotationController
     {
         if (PlayerStatusHelpers.IsAimingStatus(playerStatus))
         {
-            HandleAimingRotation(rotationSharpness);
+            HandleAimingRotation();
             return;
         }
 
         HandleDefaultRotation(movement, ref mutableStatus, rotationSharpness);
     }
 
-    private void HandleAimingRotation(float rotationSharpness)
+    private void HandleAimingRotation()
     {
         Vector3 aimDirection = PlayerCameraPlanar.GetPlanarForward(cameraController, transform, minMoveSqrMagnitude);
         aimDirection.y = 0f;
@@ -32,7 +32,13 @@ public sealed class PlayerRotationController
         if (aimDirection.sqrMagnitude < minMoveSqrMagnitude)
             return;
 
-        RotateTowards(aimDirection, rotationSharpness);
+        RotateInstantYawTowards(aimDirection);
+    }
+
+    private void RotateInstantYawTowards(Vector3 direction)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+        transform.rotation = Quaternion.Euler(0f, targetRotation.eulerAngles.y, 0f);
     }
 
     private void HandleDefaultRotation(Vector3 movement, ref PlayerStatus mutableStatus, float rotationSharpness)
