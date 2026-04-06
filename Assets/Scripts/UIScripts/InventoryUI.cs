@@ -164,8 +164,7 @@ public class InventoryUI : MonoBehaviour
         return false;
     }
 
-
-    // TESTING
+    public int SlotCount => currentSlots;
 
     public SlotData GetSlot(int index)
     {
@@ -176,26 +175,5 @@ public class InventoryUI : MonoBehaviour
     private bool IsValidIndex(int index)
     {
         return index >= 0 && index < currentSlots;
-    }
-
-    [SerializeField] private ItemData testItem;
-    [ContextMenu("TESTING")]
-    public void Test()
-    {
-        AddItem(testItem, 1);
-    }
-
-    // vacia el slot en indice
-    [ContextMenu("TESTING REMOVE")]
-    private void TestRemove()
-    {
-        RemoveItem(0);
-    }
-
-    // busca el item usado y lo consume
-    [ContextMenu("TESTING CONSUME")]
-    private void TestConsume()
-    {
-        ConsumeItem(testItem, 1);
     }
 }
