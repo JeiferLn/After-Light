@@ -1188,6 +1188,7 @@ GameObject:
   - component: {fileID: 1284403023}
   - component: {fileID: 1284403022}
   - component: {fileID: 1284403021}
+  - component: {fileID: 1284403024}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1303,6 +1304,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputsController
   moveSmoothTime: 0.1
   moveDeadZone: 0.08
+  lookSmoothTime: 0
+  lookDeadZone: 0
+  sprintSmoothTime: 0.04
 --- !u!114 &1284403023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1445,6 +1449,19 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1284403024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284403013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d019ece0b0824b7a99139936d0eab0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStatsController
+  baseStats: {fileID: 11400000, guid: ba08389ad3cf845ecaf6e0b3d7ed26d4, type: 2}
 --- !u!4 &1520775903 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0adfd79aeb9f54085b20f86f027f2879, type: 3}
