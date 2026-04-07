@@ -94,7 +94,7 @@ public class CameraController : MonoBehaviour
             thirdPersonAim.enabled = rigBlend >= aimModuleEnableThreshold;
     }
 
-    void Update()
+    void LateUpdate()
     {
         yaw += currentLook.x * rotationSpeed;
         pitch = Mathf.Clamp(pitch - currentLook.y * rotationSpeed, minPitch, maxPitch);
