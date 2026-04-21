@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class LookController : MonoBehaviour
 {
     [Header("References")]
@@ -34,6 +35,7 @@ public class LookController : MonoBehaviour
     private Vector3 lookIkSmoothVelocity;
     private float ikBlend = 1f;
     private float ikBlendVelocity;
+    private readonly Collider[] interactHitsBuffer = new Collider[32];
 
     private Transform BodyRoot => playerController != null ? playerController.transform : transform;
 
@@ -132,17 +134,19 @@ public class LookController : MonoBehaviour
         Vector3 origin = BodyRoot.position;
         GetHorizontalForward(out Vector3 fwdH);
 
-        Collider[] hits = Physics.OverlapSphere(
+        int hitCount = Physics.OverlapSphereNonAlloc(
             origin,
             interactRadius,
+            interactHitsBuffer,
             ~0,
             QueryTriggerInteraction.Collide);
 
         Collider best = null;
         float bestScore = float.MaxValue;
 
-        foreach (Collider col in hits)
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider col = interactHitsBuffer[i];
             if (col == null) continue;
             if (!PassesLayerFilter(col.gameObject.layer)) continue;
 
@@ -216,7 +220,7 @@ public class LookController : MonoBehaviour
             yawDir = Vector3.Slerp(fwdH, desiredH, maxLookAngle / yawAngle).normalized;
 
         float hMag = Mathf.Sqrt(hLenSq);
-        Vector3 newDir = new Vector3(yawDir.x * hMag, desired.y, yawDir.z * hMag);
+        Vector3 newDir = new(yawDir.x * hMag, desired.y, yawDir.z * hMag);
         if (newDir.sqrMagnitude < 1e-6f)
             newDir = yawDir;
         else
