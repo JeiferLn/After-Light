@@ -40,7 +40,7 @@ public class CraftingSystem : MonoBehaviour
             return false;
         }
 
-        Dictionary<ItemData, int> consumedItems = new Dictionary<ItemData, int>();
+        Dictionary<ItemData, int> consumedItems = new();
 
         foreach (var ing in recipe.ingredients)
         {

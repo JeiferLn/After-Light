@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerController))]
 public class InputsController : MonoBehaviour
 {
     [Header("Suavizado — movimiento")]

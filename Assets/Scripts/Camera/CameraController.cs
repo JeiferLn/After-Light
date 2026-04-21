@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
 
     [Header("Rig profiles")]
     [SerializeField]
-    private ThirdPersonRigSettings explorationRig = new ThirdPersonRigSettings
+    private ThirdPersonRigSettings explorationRig = new()
     {
         damping = new Vector3(0.1f, 1f, 0.3f),
         shoulderOffset = new Vector3(0.7f, 0f, 0f),
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
     };
 
     [SerializeField]
-    private ThirdPersonRigSettings aimRig = new ThirdPersonRigSettings
+    private ThirdPersonRigSettings aimRig = new()
     {
         damping = Vector3.zero,
         shoulderOffset = new Vector3(0.7f, 0f, 0f),
