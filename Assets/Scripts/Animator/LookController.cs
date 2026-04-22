@@ -17,6 +17,7 @@ public class LookController : MonoBehaviour
     [SerializeField] private float bodyWeight = 0.05f;
     [SerializeField] private float headWeight = 1f;
     [SerializeField] private float clampWeight = 0.7f;
+    [SerializeField] private float minHeightOffset = 0.8f;
 
     [Header("Settings")]
     [SerializeField] private float lookDistance = 10f;
@@ -39,6 +40,8 @@ public class LookController : MonoBehaviour
 
     private Transform BodyRoot => playerController != null ? playerController.transform : transform;
 
+    public Vector3 CurrentLookPosition => currentLookPosition;
+
     void Awake()
     {
         animator = GetComponent<Animator>();
@@ -48,7 +51,7 @@ public class LookController : MonoBehaviour
         Vector3 initial = cameraTransform != null
             ? cameraTransform.position + cameraTransform.forward * lookDistance
             : BodyRoot.position + BodyRoot.forward * lookDistance;
-        initial.y = Mathf.Max(initial.y, BodyRoot.position.y + 1.2f);
+        initial.y = Mathf.Max(initial.y, BodyRoot.position.y + minHeightOffset);
         smoothedGoal = initial;
         currentLookPosition = initial;
         goalSmoothVelocity = Vector3.zero;
@@ -80,7 +83,7 @@ public class LookController : MonoBehaviour
         else
             instantGoal = cameraTransform.position + cameraTransform.forward * lookDistance;
 
-        instantGoal.y = Mathf.Max(instantGoal.y, BodyRoot.position.y + 1.2f);
+        instantGoal.y = Mathf.Max(instantGoal.y, BodyRoot.position.y + minHeightOffset);
 
         float gT = Mathf.Max(0.0001f, goalSmoothTime);
         smoothedGoal = Vector3.SmoothDamp(smoothedGoal, instantGoal, ref goalSmoothVelocity, gT);
@@ -195,39 +198,54 @@ public class LookController : MonoBehaviour
     private Vector3 GetClampedLookTargetPosition(Vector3 rawTarget)
     {
         Vector3 origin = BodyRoot.position;
-        rawTarget.y = Mathf.Max(rawTarget.y, origin.y + 1.2f);
 
         Vector3 toTarget = rawTarget - origin;
         float dist = toTarget.magnitude;
+
         if (dist < 1e-4f)
             return origin + BodyRoot.forward * lookDistance;
 
         Vector3 desired = toTarget / dist;
 
+        // Forward horizontal del cuerpo
         GetHorizontalForward(out Vector3 fwdH);
 
+        // Separar componente horizontal
         Vector3 desiredH = desired;
         desiredH.y = 0f;
+
         float hLenSq = desiredH.sqrMagnitude;
+
         if (hLenSq < 1e-8f)
+        {
+            // Si estás mirando casi completamente arriba/abajo, respeta dirección original
             return origin + desired * lookDistance;
+        }
 
         desiredH.Normalize();
 
+        // Calcular yaw
         float yawAngle = Vector3.Angle(fwdH, desiredH);
-        Vector3 yawDir = desiredH;
-        if (yawAngle > maxLookAngle)
-            yawDir = Vector3.Slerp(fwdH, desiredH, maxLookAngle / yawAngle).normalized;
 
-        float hMag = Mathf.Sqrt(hLenSq);
-        Vector3 newDir = new(yawDir.x * hMag, desired.y, yawDir.z * hMag);
+        Vector3 yawDir = desiredH;
+
+        if (yawAngle > maxLookAngle)
+        {
+            yawDir = Vector3.Slerp(fwdH, desiredH, maxLookAngle / yawAngle).normalized;
+        }
+
+        // 🔥 CAMBIO CLAVE: mantener el pitch original
+        Vector3 newDir = yawDir;
+        newDir.y = desired.y;
+
+        // Normalizar correctamente
         if (newDir.sqrMagnitude < 1e-6f)
             newDir = yawDir;
         else
             newDir.Normalize();
 
         Vector3 result = origin + newDir * lookDistance;
-        result.y = Mathf.Max(result.y, origin.y + 1.2f);
+
         return result;
     }
 

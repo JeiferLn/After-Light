@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class FlashlightIK : MonoBehaviour
 {
-    public Transform gripPoint;        // de la linterna
-    public Transform leftHandTarget;   // del rig
-    public MonoBehaviour rig;
+    [SerializeField] private Transform gripPoint;        // de la linterna
+    [SerializeField] private Transform leftHandTarget;   // del rig
+    [SerializeField] private MonoBehaviour rig;
 
     public bool hasFlashlight = true;
 
