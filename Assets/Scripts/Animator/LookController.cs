@@ -18,15 +18,21 @@ public class LookController : MonoBehaviour
     [SerializeField] private float clampWeight = 0.7f;
     [SerializeField] private float minHeightOffset = 0.8f;
 
-    [Header("Settings")]
+    [Header("Settings — Idle")]
     [SerializeField] private float lookDistance = 10f;
     [SerializeField] private float maxLookAngle = 60f;
-    [Tooltip("Suavizado del punto de mira (objeto vs cámara) antes de aplicar límites de cabeza.")]
+    [Tooltip("Suavizado del punto de mira en idle.")]
     [SerializeField][Range(0.02f, 0.8f)] private float goalSmoothTime = 0.18f;
-    [Tooltip("Suavizado final del punto que recibe el IK (cabeza).")]
+    [Tooltip("Suavizado final del IK en idle.")]
     [SerializeField][Range(0.02f, 0.8f)] private float lookIkSmoothTime = 0.14f;
-    [Tooltip("Tiempo para bajar el peso del IK al pasar a caminar (evita salto brusco a mirar al frente).")]
+    [Tooltip("Tiempo para bajar el peso del IK al pasar a caminar.")]
     [SerializeField][Range(0.05f, 1.5f)] private float walkIkFadeTime = 0.28f;
+
+    [Header("Settings — Activo (caminar / correr / agachado / apuntar)")]
+    [Tooltip("Suavizado del punto de mira cuando el jugador no está en idle.")]
+    [SerializeField][Range(0.01f, 0.4f)] private float goalSmoothTimeActive = 0.04f;
+    [Tooltip("Suavizado final del IK cuando el jugador no está en idle.")]
+    [SerializeField][Range(0.01f, 0.4f)] private float lookIkSmoothTimeActive = 0.03f;
 
     private Animator animator;
     private Vector3 currentLookPosition;
@@ -84,14 +90,15 @@ public class LookController : MonoBehaviour
 
         instantGoal.y = Mathf.Max(instantGoal.y, BodyRoot.position.y + minHeightOffset);
 
-        float gT = Mathf.Max(0.0001f, goalSmoothTime);
+        bool isIdle = playerController == null || playerController.PlayerStatus == PlayerStatus.Idle;
+        float gT = Mathf.Max(0.0001f, isIdle ? goalSmoothTime : goalSmoothTimeActive);
         smoothedGoal = Vector3.SmoothDamp(smoothedGoal, instantGoal, ref goalSmoothVelocity, gT);
 
         Vector3 target = aiming
             ? GetClampedLookTargetPositionPitchOnly(smoothedGoal)
             : GetClampedLookTargetPosition(smoothedGoal);
 
-        float ikT = Mathf.Max(0.0001f, lookIkSmoothTime);
+        float ikT = Mathf.Max(0.0001f, isIdle ? lookIkSmoothTime : lookIkSmoothTimeActive);
         currentLookPosition = Vector3.SmoothDamp(currentLookPosition, target, ref lookIkSmoothVelocity, ikT);
 
         float bw = ikBlend * lookWeight;
@@ -126,7 +133,6 @@ public class LookController : MonoBehaviour
         lookDir.Normalize();
 
         Vector3 p = BodyRoot.position + lookDir * lookDistance;
-        p.y = Mathf.Max(p.y, BodyRoot.position.y + 1.2f);
         return p;
     }
 
@@ -251,7 +257,6 @@ public class LookController : MonoBehaviour
     private Vector3 GetClampedLookTargetPositionPitchOnly(Vector3 rawTarget)
     {
         Vector3 origin = BodyRoot.position;
-        rawTarget.y = Mathf.Max(rawTarget.y, origin.y + 1.2f);
 
         Vector3 toTarget = rawTarget - origin;
         if (toTarget.sqrMagnitude < 1e-6f)
@@ -274,7 +279,6 @@ public class LookController : MonoBehaviour
             onPlane = Vector3.Slerp(fwdH, onPlane, maxLookAngle / Mathf.Max(angle, 1e-4f)).normalized;
 
         Vector3 result = origin + onPlane * lookDistance;
-        result.y = Mathf.Max(result.y, origin.y + 1.2f);
         return result;
     }
 
