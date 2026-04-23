@@ -13,7 +13,7 @@ public class FlashlightFollow : MonoBehaviour
 
         Vector3 dir = (lookController.CurrentLookPosition - transform.position).normalized;
 
-        Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, -90f, 0f);
+        Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, -100f, 0f);
 
         transform.rotation = Quaternion.Slerp(
             transform.rotation,

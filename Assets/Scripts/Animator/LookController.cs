@@ -14,7 +14,6 @@ public class LookController : MonoBehaviour
 
     [Header("IK Settings")]
     [SerializeField] private float lookWeight = 1f;
-    [SerializeField] private float bodyWeight = 0.05f;
     [SerializeField] private float headWeight = 1f;
     [SerializeField] private float clampWeight = 0.7f;
     [SerializeField] private float minHeightOffset = 0.8f;
@@ -102,7 +101,7 @@ public class LookController : MonoBehaviour
             return;
         }
 
-        animator.SetLookAtWeight(ikBlend * lookWeight, ikBlend * bodyWeight, ikBlend * headWeight, ikBlend * 0.5f, clampWeight);
+        animator.SetLookAtWeight(ikBlend * lookWeight, 0f, ikBlend * headWeight, ikBlend * 0.5f, clampWeight);
         animator.SetLookAtPosition(currentLookPosition);
     }
 
