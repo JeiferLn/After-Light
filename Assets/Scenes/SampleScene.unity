@@ -1234,6 +1234,7 @@ MonoBehaviour:
   gripPoint: {fileID: 1558818623}
   leftHandTarget: {fileID: 92077053}
   rig: {fileID: 848388577}
+  flashlightModel: {fileID: 2124038206}
   elbowHint: {fileID: 1763162571}
   cameraTransform: {fileID: 330585546}
   elbowHintDefaultPos: {x: -0.143, y: 0.505, z: -0.094}
@@ -1798,6 +1799,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 91078ce4-2e94-4e09-a189-1b4c3101af1a
     m_ActionName: 'Player/Sprint[/Keyboard/shift]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnFlashlightInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 6e78051f-2a67-4330-b9c2-c89d4f2ee7ed
+    m_ActionName: 'Player/Flashlight[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -2715,9 +2732,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30950509413ab4a39a7658fada3a88ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightFollow
-  cameraTransform: {fileID: 330585546}
-  rotationSpeed: 50
   lookController: {fileID: 986736130}
+  playerController: {fileID: 1284403021}
+  rotationSpeedIdle: 10
+  rotationSpeedActive: 40
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

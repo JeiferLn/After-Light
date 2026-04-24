@@ -7,6 +7,7 @@ public class FlashlightIK : MonoBehaviour
     [SerializeField] private Transform gripPoint;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private MonoBehaviour rig;
+    [SerializeField] private GameObject flashlightModel;
 
     [Header("Elbow Hint")]
     [SerializeField] private Transform elbowHint;
@@ -34,6 +35,8 @@ public class FlashlightIK : MonoBehaviour
                 setRigWeight = (Action<float>)Delegate.CreateDelegate(typeof(Action<float>), rig, setMethod);
             }
         }
+
+        ApplyFlashlightState(hasFlashlight);
     }
 
     void LateUpdate()
@@ -69,6 +72,34 @@ public class FlashlightIK : MonoBehaviour
         if (setRigWeight != null && !Mathf.Approximately(currentRigWeight, targetRigWeight))
         {
             setRigWeight(targetRigWeight);
+            currentRigWeight = targetRigWeight;
+        }
+    }
+
+    public void ToggleFlashlight()
+    {
+        SetFlashlightActive(!hasFlashlight);
+    }
+
+    public void SetFlashlightActive(bool isActive)
+    {
+        hasFlashlight = isActive;
+        ApplyFlashlightState(isActive);
+    }
+
+    private void ApplyFlashlightState(bool isActive)
+    {
+        if (flashlightModel != null && flashlightModel.activeSelf != isActive)
+            flashlightModel.SetActive(isActive);
+
+        float targetRigWeight = isActive ? 1f : 0f;
+        if (setRigWeight != null)
+        {
+            setRigWeight(targetRigWeight);
+            currentRigWeight = targetRigWeight;
+        }
+        else
+        {
             currentRigWeight = targetRigWeight;
         }
     }

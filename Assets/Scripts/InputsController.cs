@@ -21,6 +21,7 @@ public class InputsController : MonoBehaviour
 
     private PlayerController playerController;
     private CameraController cameraController;
+    private FlashlightIK flashlightIK;
 
     private Vector2 rawMove;
     private Vector2 smoothedMove;
@@ -38,6 +39,7 @@ public class InputsController : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         cameraController = GetComponentInChildren<CameraController>();
+        flashlightIK = GetComponentInChildren<FlashlightIK>(true);
     }
 
     void Update()
@@ -168,5 +170,13 @@ public class InputsController : MonoBehaviour
         {
             // Logica para moverse en la seccion de inventario
         }
+    }
+
+    public void OnFlashlightInput(InputAction.CallbackContext context)
+    {
+        if (!context.performed || flashlightIK == null)
+            return;
+
+        flashlightIK.ToggleFlashlight();
     }
 }
