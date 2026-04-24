@@ -14,7 +14,10 @@ public class FlashlightIK : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Vector3 elbowHintDefaultPos;
     [SerializeField] private Vector3 elbowHintRightPos;
-    [SerializeField][Range(0f, 90f)] private float rightAngleThreshold = 10f;
+    [Tooltip("Ángulo (derecha) a partir del cual empieza la mezcla hacia la pose 'right'.")]
+    [SerializeField][Range(0f, 90f)] private float rightBlendStartAngle = 5f;
+    [Tooltip("Ángulo (derecha) en el que la pose 'right' ya está al 100%.")]
+    [SerializeField][Range(0f, 180f)] private float rightBlendMaxAngle = 45f;
     [SerializeField][Range(0.01f, 0.3f)] private float elbowSmoothTime = 0.1f;
 
     public bool hasFlashlight = true;
@@ -50,15 +53,24 @@ public class FlashlightIK : MonoBehaviour
         {
             Vector3 bodyForward = transform.forward;
             bodyForward.y = 0f;
-            bodyForward.Normalize();
+            if (bodyForward.sqrMagnitude < 1e-6f)
+                bodyForward = Vector3.forward;
+            else
+                bodyForward.Normalize();
 
             Vector3 camForward = cameraTransform.forward;
             camForward.y = 0f;
-            camForward.Normalize();
+            if (camForward.sqrMagnitude < 1e-6f)
+                camForward = bodyForward;
+            else
+                camForward.Normalize();
 
             float angle = Vector3.SignedAngle(bodyForward, camForward, Vector3.up);
+            float rightAngle = Mathf.Max(0f, angle);
+            float maxAngle = Mathf.Max(rightBlendStartAngle + 0.01f, rightBlendMaxAngle);
+            float blend = Mathf.InverseLerp(rightBlendStartAngle, maxAngle, rightAngle);
 
-            Vector3 targetLocal = angle > rightAngleThreshold ? elbowHintRightPos : elbowHintDefaultPos;
+            Vector3 targetLocal = Vector3.Lerp(elbowHintDefaultPos, elbowHintRightPos, blend);
 
             elbowHint.localPosition = Vector3.SmoothDamp(
                 elbowHint.localPosition,

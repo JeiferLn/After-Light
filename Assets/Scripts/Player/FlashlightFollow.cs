@@ -9,6 +9,8 @@ public class FlashlightFollow : MonoBehaviour
     [SerializeField] private float rotationSpeedIdle = 10f;
     [Tooltip("Velocidad de rotación cuando el jugador no está en idle.")]
     [SerializeField] private float rotationSpeedActive = 40f;
+    [Tooltip("Ángulo de rotación (grados) de la linterna.")]
+    [SerializeField] private float flashlightRotationAngle = -100f;
 
     void LateUpdate()
     {
@@ -16,7 +18,7 @@ public class FlashlightFollow : MonoBehaviour
 
         Vector3 dir = (lookController.CurrentLookPosition - transform.position).normalized;
 
-        Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, -100f, 0f);
+        Quaternion targetRot = Quaternion.LookRotation(dir) * Quaternion.Euler(0f, flashlightRotationAngle, 0f);
 
         bool isIdle = playerController == null || playerController.PlayerStatus == PlayerStatus.Idle;
         float speed = isIdle ? rotationSpeedIdle : rotationSpeedActive;
