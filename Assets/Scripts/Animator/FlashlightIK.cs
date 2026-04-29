@@ -4,10 +4,21 @@ using UnityEngine;
 
 public class FlashlightIK : MonoBehaviour
 {
+    private PlayerController playerController;
+    [SerializeField] private Light flashlightLight;
+    
     [SerializeField] private Transform gripPoint;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private MonoBehaviour rig;
     [SerializeField] private GameObject flashlightModel;
+    [Header("Flashlight Light")]
+    [SerializeField] private float normalIntensity = 1f;
+    [SerializeField] private float strongIntensity = 2f;
+    [SerializeField] private float normalInnerSpotAngle = 15f;
+    [SerializeField] private float strongInnerSpotAngle = 20f;
+    [SerializeField] private float normalOuterSpotAngle = 60f;
+    [SerializeField] private float strongOuterSpotAngle = 70f;
+    [SerializeField][Range(1f, 25f)] private float lightLerpSpeed = 10f;
 
     [Header("Elbow Hint")]
     [SerializeField] private Transform elbowHint;
@@ -21,13 +32,19 @@ public class FlashlightIK : MonoBehaviour
     [SerializeField][Range(0.01f, 0.3f)] private float elbowSmoothTime = 0.1f;
 
     public bool hasFlashlight = true;
+    public bool hasStrongHoldFlashlight = false;
 
     private Action<float> setRigWeight;
     private float currentRigWeight = -1f;
     private Vector3 elbowSmoothVelocity;
+    private float targetIntensity;
+    private float targetInnerSpotAngle;
+    private float targetOuterSpotAngle;
 
     void Awake()
     {
+        playerController = GetComponentInParent<PlayerController>();
+
         if (rig != null)
         {
             var rigWeightProperty = rig.GetType().GetProperty("weight", BindingFlags.Public | BindingFlags.Instance);
@@ -44,6 +61,12 @@ public class FlashlightIK : MonoBehaviour
 
     void LateUpdate()
     {
+        if (hasStrongHoldFlashlight &&
+            (playerController == null || playerController.PlayerStatus != PlayerStatus.Aiming))
+        {
+            SetStrongHoldFlashlightActive(false);
+        }
+
         if (hasFlashlight && gripPoint != null)
         {
             leftHandTarget.SetPositionAndRotation(gripPoint.position, gripPoint.rotation);
@@ -86,11 +109,31 @@ public class FlashlightIK : MonoBehaviour
             setRigWeight(targetRigWeight);
             currentRigWeight = targetRigWeight;
         }
+
+        if (flashlightLight != null)
+        {
+            float t = Mathf.Clamp01(lightLerpSpeed * Time.deltaTime);
+            flashlightLight.intensity = Mathf.Lerp(flashlightLight.intensity, targetIntensity, t);
+            flashlightLight.innerSpotAngle = Mathf.Lerp(flashlightLight.innerSpotAngle, targetInnerSpotAngle, t);
+            flashlightLight.spotAngle = Mathf.Lerp(flashlightLight.spotAngle, targetOuterSpotAngle, t);
+        }
     }
 
     public void ToggleFlashlight()
     {
+        if (playerController != null && playerController.PlayerStatus == PlayerStatus.Aiming && hasFlashlight)
+        {
+            SetStrongHoldFlashlightActive(!hasStrongHoldFlashlight);
+            return;
+        }
+
         SetFlashlightActive(!hasFlashlight);
+    }
+
+    public void SetStrongHoldFlashlightActive(bool isActive)
+    {
+        hasStrongHoldFlashlight = isActive;
+        ApplyStrongHoldFlashlightState();
     }
 
     public void SetFlashlightActive(bool isActive)
@@ -114,5 +157,19 @@ public class FlashlightIK : MonoBehaviour
         {
             currentRigWeight = targetRigWeight;
         }
+
+        if (!isActive)
+            hasStrongHoldFlashlight = false;
+
+        ApplyStrongHoldFlashlightState();
+    }
+
+    private void ApplyStrongHoldFlashlightState(){
+        if (flashlightLight == null) return;
+
+        bool strongModeActive = hasFlashlight && hasStrongHoldFlashlight;
+        targetIntensity = strongModeActive ? strongIntensity : normalIntensity;
+        targetInnerSpotAngle = strongModeActive ? strongInnerSpotAngle : normalInnerSpotAngle;
+        targetOuterSpotAngle = strongModeActive ? strongOuterSpotAngle : normalOuterSpotAngle;
     }
 }

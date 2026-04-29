@@ -1231,10 +1231,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8578564748d44bc9ff7cab032c9866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandIKController
+  flashlightLight: {fileID: 1756991084}
   gripPoint: {fileID: 1558818623}
   leftHandTarget: {fileID: 92077053}
   rig: {fileID: 848388577}
   flashlightModel: {fileID: 2124038206}
+  normalIntensity: 1
+  strongIntensity: 10
+  normalInnerSpotAngle: 50
+  strongInnerSpotAngle: 15
+  normalOuterSpotAngle: 60
+  strongOuterSpotAngle: 20
+  lightLerpSpeed: 10
   elbowHint: {fileID: 1763162571}
   cameraTransform: {fileID: 330585546}
   elbowHintDefaultPos: {x: -0.143, y: 0.505, z: -0.094}
@@ -1242,7 +1250,8 @@ MonoBehaviour:
   rightBlendStartAngle: 5
   rightBlendMaxAngle: 45
   elbowSmoothTime: 0.3
-  hasFlashlight: 1
+  hasFlashlight: 0
+  hasStrongHoldFlashlight: 0
 --- !u!114 &986736129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1282,9 +1291,9 @@ MonoBehaviour:
   minHeightOffset: -10
   lookDistance: 10
   maxLookAngle: 40
-  goalSmoothTime: 0.18
-  lookIkSmoothTime: 0.14
-  walkIkFadeTime: 0.28
+  goalSmoothTime: 0.14
+  lookIkSmoothTime: 0.1
+  walkIkFadeTime: 0.24
   goalSmoothTimeActive: 0.04
   lookIkSmoothTimeActive: 0.03
 --- !u!4 &986736131 stripped
@@ -2714,7 +2723,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2124038207
 Transform:
   m_ObjectHideFlags: 0
