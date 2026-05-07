@@ -1276,8 +1276,16 @@ MonoBehaviour:
   goalSmoothTime: 0.14
   lookIkSmoothTime: 0.1
   walkIkFadeTime: 0.24
-  goalSmoothTimeActive: 0.04
-  lookIkSmoothTimeActive: 0.03
+  goalSmoothTimeActive: 0.03
+  lookIkSmoothTimeActive: 0.02
+  interactableTransitionGoalSmoothTime: 0.8
+  interactableTransitionLookSmoothTime: 0.7
+  interactableTransitionDuration: 0.5
+--- !u!4 &986736131 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 680906d026cb345579e92068d795fa8e, type: 3}
+  m_PrefabInstance: {fileID: 1747941655}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &986736140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1337,11 +1345,6 @@ MonoBehaviour:
   lookWeight: 1
   headWeight: 1
   clampWeight: 0.7
---- !u!4 &986736131 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 680906d026cb345579e92068d795fa8e, type: 3}
-  m_PrefabInstance: {fileID: 1747941655}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1009748768 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9d89e18b40cb34d8bad107ff1e8793df, type: 3}
@@ -2807,6 +2810,7 @@ MonoBehaviour:
   playerController: {fileID: 1284403021}
   rotationSpeedIdle: 30
   rotationSpeedActive: 40
+  rotationSpeedInteractableTransition: 8
   flashlightRotationAngle: -100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
