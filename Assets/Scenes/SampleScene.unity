@@ -1230,26 +1230,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d8578564748d44bc9ff7cab032c9866, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HandIKController
-  flashlightLight: {fileID: 1756991084}
-  gripPoint: {fileID: 1558818623}
-  leftHandTarget: {fileID: 92077053}
-  rig: {fileID: 848388577}
-  flashlightModel: {fileID: 2124038206}
-  normalIntensity: 1
-  strongIntensity: 10
-  normalInnerSpotAngle: 50
-  strongInnerSpotAngle: 15
-  normalOuterSpotAngle: 60
-  strongOuterSpotAngle: 20
-  lightLerpSpeed: 10
-  elbowHint: {fileID: 1763162571}
-  cameraTransform: {fileID: 330585546}
-  elbowHintDefaultPos: {x: -0.143, y: 0.505, z: -0.094}
-  elbowHintRightPos: {x: 0.162, y: 1.544, z: -0.908}
-  rightBlendStartAngle: 5
-  rightBlendMaxAngle: 45
-  elbowSmoothTime: 0.3
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
+  handRig: {fileID: 986736140}
+  flashlightLight: {fileID: 986736141}
+  playerController: {fileID: 1284403021}
   hasFlashlight: 0
   hasStrongHoldFlashlight: 0
 --- !u!114 &986736129
@@ -1279,15 +1263,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b5e12a56bff24036bf5498cf74de8d3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LookController
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLookTargetProvider
   cameraTransform: {fileID: 330585546}
+  playerController: {fileID: 1284403021}
   interactRadius: 5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  lookWeight: 1
-  headWeight: 1
-  clampWeight: 0.7
   minHeightOffset: -10
   lookDistance: 10
   maxLookAngle: 40
@@ -1296,6 +1278,65 @@ MonoBehaviour:
   walkIkFadeTime: 0.24
   goalSmoothTimeActive: 0.04
   lookIkSmoothTimeActive: 0.03
+--- !u!114 &986736140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986736127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4d3f6a2c9a5e7f0d1f6b3c9e5d8a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightHandRig
+  gripPoint: {fileID: 1558818623}
+  leftHandTarget: {fileID: 92077053}
+  rig: {fileID: 848388577}
+  flashlightModel: {fileID: 2124038206}
+  elbowHint: {fileID: 1763162571}
+  cameraTransform: {fileID: 330585546}
+  elbowHintDefaultPos: {x: -0.143, y: 0.505, z: -0.094}
+  elbowHintRightPos: {x: 0.162, y: 1.544, z: -0.908}
+  rightBlendStartAngle: 5
+  rightBlendMaxAngle: 45
+  elbowSmoothTime: 0.3
+--- !u!114 &986736141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986736127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c5e4f7b3d0a6f8c1e2f7c4d0a6e9b3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlashlightLight
+  flashlightLight: {fileID: 1756991084}
+  normalIntensity: 1
+  strongIntensity: 10
+  normalInnerSpotAngle: 50
+  strongInnerSpotAngle: 15
+  normalOuterSpotAngle: 60
+  strongOuterSpotAngle: 20
+  lightLerpSpeed: 10
+--- !u!114 &986736142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986736127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3c2e5f1b894d6e9c0f5a2b8d4e7c1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadLookIK
+  lookTargetProvider: {fileID: 986736130}
+  lookWeight: 1
+  headWeight: 1
+  clampWeight: 0.7
 --- !u!4 &986736131 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 680906d026cb345579e92068d795fa8e, type: 3}
@@ -2158,6 +2199,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 680906d026cb345579e92068d795fa8e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 986736128}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 680906d026cb345579e92068d795fa8e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 986736140}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 680906d026cb345579e92068d795fa8e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 986736141}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 680906d026cb345579e92068d795fa8e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 986736142}
   m_SourcePrefab: {fileID: 100100000, guid: 680906d026cb345579e92068d795fa8e, type: 3}
 --- !u!1 &1756991081
 GameObject:
@@ -2753,7 +2803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30950509413ab4a39a7658fada3a88ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightFollow
-  lookController: {fileID: 986736130}
+  lookTargetProvider: {fileID: 986736130}
   playerController: {fileID: 1284403021}
   rotationSpeedIdle: 30
   rotationSpeedActive: 40
