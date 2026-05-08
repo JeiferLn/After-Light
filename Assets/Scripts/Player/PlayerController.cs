@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     private CharacterController characterController;
@@ -102,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
         float runSpeed = gameStatus == GameStatus.Combat ? runSpeedInCombat : runSpeedOutsideCombat;
         float horizontalSpeed = playerStatus == PlayerStatus.Running ? runSpeed : walkSpeed;
-        Vector3 planarVelocity = movement * horizontalSpeed * speedMul;
+        Vector3 planarVelocity = horizontalSpeed * speedMul * movement;
         motor.Move(planarVelocity, Time.deltaTime);
     }
 

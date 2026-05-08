@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerController))]
 public class InputsController : MonoBehaviour
 {
     [Header("Suavizado — movimiento")]
@@ -20,6 +21,7 @@ public class InputsController : MonoBehaviour
 
     private PlayerController playerController;
     private CameraController cameraController;
+    private FlashlightController flashlightController;
 
     private Vector2 rawMove;
     private Vector2 smoothedMove;
@@ -37,6 +39,7 @@ public class InputsController : MonoBehaviour
     {
         playerController = GetComponent<PlayerController>();
         cameraController = GetComponentInChildren<CameraController>();
+        flashlightController = GetComponentInChildren<FlashlightController>(true);
     }
 
     void Update()
@@ -167,5 +170,13 @@ public class InputsController : MonoBehaviour
         {
             // Logica para moverse en la seccion de inventario
         }
+    }
+
+    public void OnFlashlightInput(InputAction.CallbackContext context)
+    {
+        if (!context.performed || flashlightController == null)
+            return;
+
+        flashlightController.ToggleFlashlight();
     }
 }
