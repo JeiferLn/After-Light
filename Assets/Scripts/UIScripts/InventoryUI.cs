@@ -463,6 +463,7 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
+        testAmount = testItem.amount;
         AddItem(testItem, testAmount);
     }
 

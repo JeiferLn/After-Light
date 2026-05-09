@@ -2865,9 +2865,14 @@ MonoBehaviour:
   slotPrefab: {fileID: 1878435487641731276, guid: 419ba50f19820d44b9ada85951c2ef86, type: 3}
   itemPrefab: {fileID: 2697902489573160056, guid: 930a01461d6683243bb24b34a34636b2, type: 3}
   initialSlots: 8
-  testItem: {fileID: 11400000, guid: 2fded851677ff43e9a84dcdb95c16f06, type: 2}
+  normalSlotColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
+  selectedSlotColor: {r: 0.95, g: 0.85, b: 0.25, a: 1}
+  moveRepeatDelay: 0.35
+  moveRepeatRate: 0.12
+  moveDeadzone: 0.45
+  testItem: {fileID: 11400000, guid: 4f42726073a6c554b9e3a09762177c2b, type: 2}
   testAmount: 1
-  consumeTestItem: {fileID: 11400000, guid: 2fded851677ff43e9a84dcdb95c16f06, type: 2}
+  consumeTestItem: {fileID: 11400000, guid: 5ccef011a9928d94b98219f6d5de6a49, type: 2}
   consumeAmount: 1
 --- !u!1 &1605133839
 GameObject:
@@ -3333,7 +3338,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a71570ebca92314bb85c462ee10b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDatabase
-  items: []
 --- !u!1 &1990849012
 GameObject:
   m_ObjectHideFlags: 0

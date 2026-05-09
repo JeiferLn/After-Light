@@ -6,6 +6,10 @@ public class ItemData : ScriptableObject
 {
     public string itemID = System.Guid.NewGuid().ToString();
     public string itemName;
+    
+    [Multiline]
+    public string itemDescription;
+
     public Sprite icon;
     public ItemType itemType;
 
@@ -15,6 +19,6 @@ public class ItemData : ScriptableObject
 
     [Header("Stack")]
     public bool stackable = true;
-    public int stackSize = 1;
+    public int amount = 1;
     public int maxStack = 99;
 }
