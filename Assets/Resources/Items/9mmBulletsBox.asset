@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e71da80de429c20409d48bff17f9d51b, type: 3}
-  m_Name: Key
+  m_Name: 9mmBulletsBox
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemID: llave_comun
-  itemName: Key
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  itemType: 2
-  stackable: 0
+  itemID: 63d3b954-cc71-4ea3-9ef3-00e7f2e388f0
+  itemName: 
+  icon: {fileID: 0}
+  itemType: 0
+  recoveryVal: 10
+  stackable: 1
   maxStack: 99
