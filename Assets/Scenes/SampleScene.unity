@@ -1231,9 +1231,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8578564748d44bc9ff7cab032c9866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightController
-  handRig: {fileID: 986736140}
+  handRig: {fileID: 0}
   flashlightLight: {fileID: 986736141}
-  playerController: {fileID: 1284403021}
+  playerController: {fileID: 0}
   hasFlashlight: 0
   hasStrongHoldFlashlight: 0
 --- !u!114 &986736129
@@ -1265,7 +1265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLookTargetProvider
   cameraTransform: {fileID: 330585546}
-  playerController: {fileID: 1284403021}
+  playerController: {fileID: 0}
   interactRadius: 5
   interactableLayer:
     serializedVersion: 2
@@ -1275,12 +1275,8 @@ MonoBehaviour:
   maxLookAngle: 40
   goalSmoothTime: 0.14
   lookIkSmoothTime: 0.1
-  walkIkFadeTime: 0.24
-  goalSmoothTimeActive: 0.03
-  lookIkSmoothTimeActive: 0.02
-  interactableTransitionGoalSmoothTime: 0.8
-  interactableTransitionLookSmoothTime: 0.7
-  interactableTransitionDuration: 0.5
+  interactableGoalSmoothTime: 0.1
+  interactableLookIkSmoothTime: 0.08
 --- !u!4 &986736131 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 680906d026cb345579e92068d795fa8e, type: 3}
