@@ -17,7 +17,7 @@ MonoBehaviour:
   itemDescription: 'Es municion de 9mm.
 
 '
-  icon: {fileID: 0}
+  icon: {fileID: -1978181209, guid: 1209794e7ce1c5846bf436349fc4a3a6, type: 3}
   itemType: 0
   recoveryVal: 10
   stackable: 1

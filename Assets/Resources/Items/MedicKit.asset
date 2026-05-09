@@ -15,9 +15,9 @@ MonoBehaviour:
   itemID: dc94be46-ec5b-47a9-b66c-7f82ac7c7839
   itemName: 'Medic Kit '
   itemDescription: Es un kit de medicina, podria salvarme la vida.
-  icon: {fileID: 0}
+  icon: {fileID: 1432076663, guid: 1209794e7ce1c5846bf436349fc4a3a6, type: 3}
   itemType: 2
   recoveryVal: 100
   stackable: 1
-  stackSize: 1
+  amount: 1
   maxStack: 3

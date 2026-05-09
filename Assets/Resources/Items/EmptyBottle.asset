@@ -15,9 +15,9 @@ MonoBehaviour:
   itemID: a7109816-3ebf-452b-9a4c-af809df982b0
   itemName: Empty bottle
   itemDescription: Es una botella vacia, quizas tenga alguna utilidad.
-  icon: {fileID: 0}
+  icon: {fileID: -693088871, guid: 1209794e7ce1c5846bf436349fc4a3a6, type: 3}
   itemType: 1
   recoveryVal: 10
   stackable: 0
-  stackSize: 1
+  amount: 1
   maxStack: 1
