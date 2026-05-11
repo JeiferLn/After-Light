@@ -6,11 +6,12 @@ public class ItemData : ScriptableObject
 {
     public string itemID = System.Guid.NewGuid().ToString();
     public string itemName;
-    
+
     [Multiline]
     public string itemDescription;
 
     public Sprite icon;
+    public GameObject itemModel3d;
     public ItemType itemType;
 
     [ShowIf("itemType", ItemType.Consumable)]

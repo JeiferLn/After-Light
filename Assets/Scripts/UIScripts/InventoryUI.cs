@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -27,6 +28,8 @@ public class InventoryUI : MonoBehaviour
     private int gridColumns = 4;
 
     private string SavePath => Application.persistentDataPath + "/inventory.json";
+    public event Action<int, SlotData> OnSelectionChanged;
+    public int SelectedIndex => selectedIndex;
 
     private void Awake()
     {
@@ -193,6 +196,8 @@ public class InventoryUI : MonoBehaviour
 
         ItemUI itemUI = itemGO.GetComponent<ItemUI>();
         itemUI.Setup(slots[index].item, slots[index].amount);
+        if (index == selectedIndex)
+            NotifySelectionChanged();
     }
 
     public bool ConsumeItem(ItemData item, int amount)
@@ -226,6 +231,11 @@ public class InventoryUI : MonoBehaviour
     {
         if (!IsValidIndex(index)) return null;
         return slots[index];
+    }
+
+    public SlotData GetSelectedSlot()
+    {
+        return IsValidIndex(selectedIndex) ? slots[selectedIndex] : null;
     }
 
     private bool IsValidIndex(int index)
@@ -435,6 +445,7 @@ public class InventoryUI : MonoBehaviour
         if (IsValidIndex(previous))
             ApplySlotVisual(previous, false);
         ApplySlotVisual(selectedIndex, true);
+        NotifySelectionChanged();
     }
 
     private void ApplySlotVisual(int index, bool isSelected)
@@ -445,6 +456,17 @@ public class InventoryUI : MonoBehaviour
         Image slotImage = transform.GetChild(index).GetComponent<Image>();
         if (slotImage != null)
             slotImage.color = isSelected ? selectedSlotColor : normalSlotColor;
+    }
+
+    private void NotifySelectionChanged()
+    {
+        if (!IsValidIndex(selectedIndex))
+        {
+            OnSelectionChanged?.Invoke(-1, null);
+            return;
+        }
+
+        OnSelectionChanged?.Invoke(selectedIndex, slots[selectedIndex]);
     }
 
     //---------------------funciones para testear------------------------//

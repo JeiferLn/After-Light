@@ -18,6 +18,7 @@ MonoBehaviour:
 
 '
   icon: {fileID: -1978181209, guid: 1209794e7ce1c5846bf436349fc4a3a6, type: 3}
+  itemModel3d: {fileID: 919132149155446097, guid: 21625079f0a28684b85aa0e0be2d7eb8, type: 3}
   itemType: 0
   recoveryVal: 10
   stackable: 1
