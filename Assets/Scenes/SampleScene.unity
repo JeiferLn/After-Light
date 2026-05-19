@@ -1234,6 +1234,8 @@ MonoBehaviour:
   handRig: {fileID: 0}
   flashlightLight: {fileID: 986736141}
   playerController: {fileID: 0}
+  inventoryUI: {fileID: 1152382275}
+  drainRatePerSecond: 10
   hasFlashlight: 0
   hasStrongHoldFlashlight: 0
 --- !u!114 &986736129
@@ -1379,6 +1381,75 @@ Transform:
   - {fileID: 1831614072}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1152382274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1152382276}
+  - component: {fileID: 1152382275}
+  - component: {fileID: 1152382277}
+  m_Layer: 0
+  m_Name: InventoryTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1152382275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152382274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc46781f92192e146b7dc4075776942e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
+  slotPrefab: {fileID: 1878435487641731276, guid: 419ba50f19820d44b9ada85951c2ef86, type: 3}
+  itemPrefab: {fileID: 2697902489573160056, guid: 930a01461d6683243bb24b34a34636b2, type: 3}
+  initialSlots: 8
+  normalSlotColor: {r: 0.6150943, g: 0.6150943, b: 0.6150943, a: 1}
+  selectedSlotColor: {r: 0.95, g: 0.85, b: 0.25, a: 1}
+  moveRepeatDelay: 0.35
+  moveRepeatRate: 0.12
+  moveDeadzone: 0.45
+  testItem: {fileID: 11400000, guid: 61b76ff3cf3fb49508eb8e6b513ddbc6, type: 2}
+  testAmount: 1
+  consumeTestItem: {fileID: 11400000, guid: 61b76ff3cf3fb49508eb8e6b513ddbc6, type: 2}
+  consumeAmount: 1
+--- !u!4 &1152382276
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152382274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.14064, y: -0.32158, z: 0.12439}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1152382277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1152382274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a71570ebca92314bb85c462ee10b9c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDatabase
 --- !u!1 &1185459672
 GameObject:
   m_ObjectHideFlags: 11
@@ -1867,6 +1938,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 6e78051f-2a67-4330-b9c2-c89d4f2ee7ed
     m_ActionName: 'Player/Flashlight[/Keyboard/f]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnRechargeFlashlightInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+    m_ActionName: 'Player/RechargeFlashlight[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284403022}
+        m_TargetAssemblyTypeName: InputsController, Assembly-CSharp
+        m_MethodName: OnCycleConsumableInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f
+    m_ActionName: 'Player/CycleConsumable[/Keyboard/x]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -1881,9 +1984,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1284403013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d019ece0b0824b7a99139936d0eab0e, type: 3}
+  m_Script: {fileID: 11500000, guid: 89492ada9275744a586d5e9afdac3411, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterStatsController
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDatabase
   baseStats: {fileID: 11400000, guid: ba08389ad3cf845ecaf6e0b3d7ed26d4, type: 2}
 --- !u!1 &1339049722
 GameObject:
@@ -2821,4 +2924,5 @@ SceneRoots:
   - {fileID: 1943501683}
   - {fileID: 1339049726}
   - {fileID: 434292326}
+  - {fileID: 1152382276}
   - {fileID: 1185459674}

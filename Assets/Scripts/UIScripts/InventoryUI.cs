@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -102,7 +103,10 @@ public class InventoryUI : MonoBehaviour
                         UpdateSlotUI(i);
 
                         if (amount <= 0)
+                        {
+                            NotifyItemAdded(item);
                             return true;
+                        }
                     }
                 }
             }
@@ -130,6 +134,7 @@ public class InventoryUI : MonoBehaviour
             UpdateSlotUI(index);
         }
 
+        NotifyItemAdded(item);
         return true;
     }
 
@@ -216,6 +221,7 @@ public class InventoryUI : MonoBehaviour
                     }
 
                     UpdateSlotUI(i);
+                    NotifyItemConsumed(item);
                     return true;
                 }
             }
@@ -223,6 +229,41 @@ public class InventoryUI : MonoBehaviour
 
         Debug.Log("Its Empty or not enought amount");
         return false;
+    }
+
+    public List<ItemData> GetItemsByType(ItemType type)
+    {
+        List<ItemData> result = new();
+        for (int i = 0; i < currentSlots; i++)
+        {
+            if (slots[i].HasItem && slots[i].item.itemType == type && !result.Contains(slots[i].item))
+                result.Add(slots[i].item);
+        }
+        return result;
+    }
+
+    public int CountItem(ItemData item)
+    {
+        if (item == null) return 0;
+        int total = 0;
+        for (int i = 0; i < currentSlots; i++)
+        {
+            if (slots[i].HasItem && slots[i].item == item)
+                total += slots[i].amount;
+        }
+        return total;
+    }
+
+    private void NotifyItemAdded(ItemData item)
+    {
+        if (PlayerDatabase.Instance != null)
+            PlayerDatabase.Instance.OnInventoryItemAdded(item);
+    }
+
+    private void NotifyItemConsumed(ItemData item)
+    {
+        if (PlayerDatabase.Instance != null)
+            PlayerDatabase.Instance.OnInventoryItemConsumed(item);
     }
 
     public int SlotCount => currentSlots;

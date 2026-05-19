@@ -179,4 +179,20 @@ public class InputsController : MonoBehaviour
 
         flashlightController.ToggleFlashlight();
     }
+
+    public void OnRechargeFlashlightInput(InputAction.CallbackContext context)
+    {
+        if (!context.performed || flashlightController == null)
+            return;
+
+        flashlightController.TryRecharge();
+    }
+
+    public void OnCycleConsumableInput(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+        if (PlayerDatabase.Instance == null) return;
+
+        PlayerDatabase.Instance.CycleEquippedConsumable();
+    }
 }

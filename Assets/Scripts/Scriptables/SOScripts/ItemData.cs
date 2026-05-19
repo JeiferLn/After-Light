@@ -14,8 +14,8 @@ public class ItemData : ScriptableObject
     public GameObject itemModel3d;
     public ItemType itemType;
 
-    [ShowIf("itemType", ItemType.Consumable)]
-    [Header("Consumible Values")]
+    [ShowIf("@itemType == ItemType.Consumable || itemType == ItemType.Crystal")]
+    [Header("Consumible / Crystal Values")]
     public int recoveryVal = 10;
 
     [Header("Stack")]
