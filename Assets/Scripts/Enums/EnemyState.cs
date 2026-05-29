@@ -1,0 +1,1 @@
+public enum EnemyState { Idle, WalkRandom, Chase, Attack, Flee, Patrol, Alert, Dead }
