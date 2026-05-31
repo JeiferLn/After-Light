@@ -15,18 +15,9 @@ public class IdleState : EnemyStateBase
     {
         _timer += dt;
 
-        // 1️⃣ Detección > Todo: pasa a perseguir
-        if (sm.IsDetected)
-        {
-            Transition(sm, EnemyState.Chase);
-            return;
-        }
-
-        // 2️⃣ Timer cumplido: patrulla aleatoria
-        if (_timer >= sm.Config.idleDuration)
-        {
-            Transition(sm, EnemyState.WalkRandom);
-        }
+        // ✅ Usa el valor ya calculado, no recalcula distancia
+        if (sm.IsDetected) { Transition(sm, EnemyState.Chase); return; }
+        if (_timer >= sm.Config.idleDuration) Transition(sm, EnemyState.WalkRandom);
     }
 
     public override void Exit(EnemyStateMachine sm) { }

@@ -1,26 +1,23 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyStateMachine : MonoBehaviour
 {
-    // Estado actual (público para debug/UI)
     public EnemyState CurrentStateEnum { get; private set; } = EnemyState.Idle;
-
-    // Referencias externas
     public IEnemyState CurrentState { get; private set; }
     public EnemyConfig Config { get; private set; }
     public NavMeshAgent Agent { get; private set; }
     public Transform Player { get; set; }
-    public bool IsDetected { get; private set; }
+    public bool IsDetected { get; set; } // ← setter público: lo escribe EnemyManager
 
-    // Diccionario de estados: Enum → Lógica del estado
     private readonly Dictionary<EnemyState, IEnemyState> _states = new();
-
-    // Flags de inicialización
     private bool _isInitialized;
-    private bool _isInTrigger;
+
+    // ─── Cache de vecinos para flocking — lo rellena EnemyManager ─────────────
+    // Evita que cada enemigo itere ActiveEnemies por su cuenta (O(n²) → O(n))
+    [System.NonSerialized] public List<EnemyStateMachine> NearbyEnemies = new();
 
     private void Awake()
     {
@@ -34,11 +31,9 @@ public class EnemyStateMachine : MonoBehaviour
 
         Config = enemyComp.Config;
         RegisterStates();
-        Agent.speed = Config.moveSpeed;
+        Agent.speed        = Config.moveSpeed;
         Agent.acceleration = 20f;
         Agent.angularSpeed = 200f;
-
-        Debug.Log($"[SM] 🟡 {name} despierto. States registrados: {_states.Count}");
     }
 
     private void OnEnable()
@@ -55,117 +50,48 @@ public class EnemyStateMachine : MonoBehaviour
 
     private IEnumerator InitializeAsync()
     {
-        yield return null; // Espera 1 frame para que NavMesh/Physics terminen setup
+        yield return null;
 
         if (!Agent.isOnNavMesh)
         {
-            Debug.LogWarning($"[{name}] No está sobre NavMesh al iniciar. Corrigiendo posición...");
             if (NavMesh.SamplePosition(transform.position, out var hit, 2f, NavMesh.AllAreas))
             {
                 transform.position = hit.position;
                 Agent.Warp(hit.position);
             }
         }
-
-        _isInitialized = true; // ✅ Siempre true, no bloquea el loop
-        Debug.Log($"[SM] 🟢 {name} inicializado. Update loop activo.");
+        _isInitialized = true;
     }
 
-    private void Update()
+    // ─── Update del engine DESACTIVADO ────────────────────────────────────────
+    // EnemyManager llama ManagedUpdate() en su propio Update centralizado.
+    private void Update() { }  // Vacío intencionalmente — o usa [DisableDomainReload]
+
+    // ─── Llamado por EnemyManager cada frame ──────────────────────────────────
+    public void ManagedUpdate(float dt)
     {
-        if (!_isInitialized) return;
-
-        // 🔍 DIAGNÓSTICO DETALLADO
-        if (GameManager.Instance == null)
-        {
-            Debug.LogWarning($"[{name}] ⚠️ GameManager.Instance es NULL. Esperando...");
-            return;
-        }
-
-        if (GameManager.Instance.PlayerTransform == null)
-        {
-            Debug.LogWarning($"[{name}] ⚠️ GameManager.PlayerTransform es NULL. ¿Está asignado en Inspector?");
-            return;
-        }
-
-        // Auto-asignar si no se inyectó manualmente
-        if (Player == null)
-            Player = GameManager.Instance.PlayerTransform;
+        if (!_isInitialized || CurrentState == null || Config == null) return;
 
         if (Player == null)
         {
-            Debug.LogWarning($"[{name}] ⛔ Player sigue siendo null tras auto-asignación.");
-            return;
+            Player = GameManager.Instance?.PlayerTransform;
+            if (Player == null) return;
         }
 
-        if (Config == null)
-        {
-            Debug.LogError($"[{name}] ⛔ Config es null.");
-            return;
-        }
-        if (CurrentState == null)
-        {
-            Debug.LogError($"[{name}] ⛔ CurrentState es null.");
-            return;
-        }
-
-        UpdateDetection();
-        CurrentState.Update(this, Time.deltaTime);
+        CurrentState.Update(this, dt);
     }
 
-    // === DETECCIÓN HÍBRIDA (Trigger + OverlapSphere) ===
-    private void UpdateDetection()
-    {
-        if (Config == null) return;
-
-        bool sphereDetected = false;
-        if (Config.useOverlapSphere)
-        {
-            sphereDetected = Physics.CheckSphere(
-                transform.position,
-                Config.detectionRadius,
-                Config.targetLayer
-            );
-        }
-        IsDetected = _isInTrigger || sphereDetected;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (Config == null) return;
-        if ((Config.targetLayer.value == -1 || (Config.targetLayer & (1 << other.gameObject.layer)) != 0)
-            || other.CompareTag("Player"))
-        {
-            _isInTrigger = true;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (Config == null) return;
-        if ((Config.targetLayer.value == -1 || (Config.targetLayer & (1 << other.gameObject.layer)) != 0)
-            || other.CompareTag("Player"))
-        {
-            _isInTrigger = false;
-        }
-    }
-
-    // === GESTIÓN DE ESTADOS (State Pattern) ===
+    // ─── Estado ───────────────────────────────────────────────────────────────
     private void RegisterStates()
     {
-        // Registrar cada estado concreto. Añade más aquí según necesites.
-        _states[EnemyState.Idle] = new IdleState();
+        _states[EnemyState.Idle]       = new IdleState();
         _states[EnemyState.WalkRandom] = new WalkRandomState();
-        _states[EnemyState.Chase] = new ChaseState();
-        _states[EnemyState.Attack] = new AttackState();
-        // _states[EnemyState.Flee] = new FleeState();
-        // ... etc
+        _states[EnemyState.Chase]      = new ChaseState();
+        _states[EnemyState.Attack]     = new AttackState();
     }
 
     public void ChangeState(EnemyState newState)
     {
-        Debug.Log($"[SM] 🔄 {name} → Solicitando estado: {newState} (Actual: {CurrentStateEnum})");
-
         if (CurrentState != null) CurrentState.Exit(this);
 
         if (_states.TryGetValue(newState, out var state))
@@ -173,15 +99,13 @@ public class EnemyStateMachine : MonoBehaviour
             CurrentState = state;
             CurrentStateEnum = newState;
             CurrentState.Enter(this);
-            Debug.Log($"[SM] ✅ {name} → Estado activo confirmado: {newState}");
         }
         else
         {
-            Debug.LogError($"[SM] ❌ {name} → Estado '{newState}' NO registrado en RegisterStates().");
+            Debug.LogError($"[SM] Estado '{newState}' no registrado.");
         }
     }
 
-    // === UTILIDADES PARA LOS ESTADOS ===
     public void SetDestinationSafe(Vector3 target)
     {
         if (!Agent.isOnNavMesh) return;

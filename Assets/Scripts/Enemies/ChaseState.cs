@@ -136,40 +136,37 @@ public class ChaseState : EnemyStateBase
     // ─── Boids adaptado ──────────────────────────────────────────────────────
     private Vector3 CalculateFlocking(EnemyStateMachine sm, Vector3 playerPos)
     {
+        // ← Ahora usa la lista precalculada por EnemyManager, no itera todo el pool
+        var neighbors = sm.NearbyEnemies;
+        if (neighbors.Count == 0) return Vector3.zero;
+
         Vector3 separation = Vector3.zero;
-        Vector3 cohesion   = Vector3.zero;
-        Vector3 alignment  = Vector3.zero;
-        int neighborCount  = 0;
+        Vector3 cohesion = Vector3.zero;
+        Vector3 alignment = Vector3.zero;
 
-        float radiusSqr = sm.Config.flockRadius * sm.Config.flockRadius;
-
-        foreach (var other in PoolManager.Instance.ActiveEnemies)
+        for (int i = 0; i < neighbors.Count; i++)
         {
-            if (other == sm || other == null || other.Agent == null) continue;
+            var other = neighbors[i];
+            if (other == null || other.Agent == null) continue;
 
-            float distSqr = (sm.transform.position - other.transform.position).sqrMagnitude;
-            if (distSqr < radiusSqr && distSqr > 0.01f)
-            {
-                Vector3 diff = sm.transform.position - other.transform.position;
-                float dist = Mathf.Sqrt(distSqr);
+            Vector3 diff = sm.transform.position - other.transform.position;
+            float distSqr = diff.sqrMagnitude;
+            if (distSqr < 0.01f) continue;
 
-                // FIX: separación inversamente proporcional a distancia (no dividida luego)
-                separation += (diff / dist) * (sm.Config.flockRadius / dist);
-
-                cohesion  += other.transform.position;
-                alignment += other.Agent.velocity;
-                neighborCount++;
-            }
+            float dist = Mathf.Sqrt(distSqr);
+            separation += (diff / dist) * (sm.Config.flockRadius / dist);
+            cohesion += other.transform.position;
+            alignment += other.Agent.velocity;
         }
 
-        if (neighborCount == 0) return Vector3.zero;
+        int n = neighbors.Count;
+        cohesion = (cohesion / n) - sm.transform.position;
+        alignment = alignment / n;
 
-        // FIX: separación NO se promedia — su magnitud debe crecer con más vecinos
-        cohesion  = (cohesion  / neighborCount) - sm.transform.position;
-        alignment =  alignment / neighborCount;
+        Vector3 result = (separation * sm.Config.separationWeight) +
+                         (cohesion * sm.Config.cohesionWeight) +
+                         (alignment * sm.Config.alignmentWeight);
 
-        return (separation * sm.Config.separationWeight) +
-               (cohesion   * sm.Config.cohesionWeight)   +
-               (alignment  * sm.Config.alignmentWeight);
+        return Vector3.ClampMagnitude(result, sm.Config.attackRange * 0.8f);
     }
 }

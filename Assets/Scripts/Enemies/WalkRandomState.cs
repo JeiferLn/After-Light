@@ -9,7 +9,7 @@ public class WalkRandomState : EnemyStateBase
     public override void Enter(EnemyStateMachine sm)
     {
         _stateTimer = 0f;
-        
+
         // Fallback seguro por si los campos no están en el SO
         float min = sm.Config.walkMinInterval > 0 ? sm.Config.walkMinInterval : 20f;
         float max = sm.Config.walkMaxInterval > min ? sm.Config.walkMaxInterval : min + 20f;
@@ -17,7 +17,7 @@ public class WalkRandomState : EnemyStateBase
 
         sm.Agent.isStopped = false;
         sm.Agent.speed = sm.Config.moveSpeed;
-        
+
         SetNewRandomTarget(sm);
     }
 
@@ -25,30 +25,14 @@ public class WalkRandomState : EnemyStateBase
     {
         _stateTimer += dt;
 
-        // 1️⃣ Detección > Todo: interrumpe patrulla y persigue
-        if (sm.IsDetected)
-        {
-            Transition(sm, EnemyState.Chase);
-            return;
-        }
+        // ✅ Mismo patrón
+        if (sm.IsDetected) { Transition(sm, EnemyState.Chase); return; }
 
-        // 2️⃣ Timer: elige nuevo rumbo
         if (_stateTimer >= _targetChangeInterval)
         {
             SetNewRandomTarget(sm);
             _stateTimer = 0f;
-            
-            float min = sm.Config.walkMinInterval > 0 ? sm.Config.walkMinInterval : 20f;
-            float max = sm.Config.walkMaxInterval > min ? sm.Config.walkMaxInterval : min + 20f;
-            _targetChangeInterval = Random.Range(min, max);
-            return;
-        }
-
-        // 3️⃣ Si llegó al destino, se queda quieto hasta que el timer expire
-        if (sm.Agent.hasPath && sm.Agent.remainingDistance <= sm.Agent.stoppingDistance)
-        {
-            // Opcional: pausar visualmente
-            // sm.Agent.isStopped = true;
+            _targetChangeInterval = Random.Range(sm.Config.walkMinInterval, sm.Config.walkMaxInterval);
         }
     }
 
