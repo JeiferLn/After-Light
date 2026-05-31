@@ -14,12 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyConfig
   idleDuration: 2
   walkDuration: 3
-  walkRadius: 8
-  moveSpeed: 3.5
+  walkRadius: 5
+  moveSpeed: 2
+  flankRadius: 1
+  flockRadius: 3.5
+  separationWeight: 2.5
+  cohesionWeight: 0.6
+  alignmentWeight: 0.8
+  walkMinInterval: 20
+  walkMaxInterval: 40
   detectionRadius: 10
   chaseExitMultiplier: 1.5
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
   useOverlapSphere: 1
+  attackRange: 1.5
+  attackCooldown: 1.2
+  attackDamage: 10
   enemyPrefab: {fileID: 2414160604571503060, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
