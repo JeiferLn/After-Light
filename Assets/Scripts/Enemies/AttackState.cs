@@ -11,7 +11,7 @@ public class AttackState : EnemyStateBase
         _attackTimer = 0f;
         _isAttacking = false;
         sm.Agent.isStopped = true;
-        // sm.Animator?.SetTrigger("Attack"); // Hook para animación
+        sm.animator?.CrossFade("ZombieFemale_AttackInPlace01", 0.1f);
         Debug.Log($"[{sm.name}] 🗡️ Entró en modo Ataque");
     }
 

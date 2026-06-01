@@ -937,6 +937,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81acf92e65566924daa6d2c1eed02b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
+  _batchSizePerFrame: 0
+  _flockingUpdateInterval: 3
 --- !u!4 &760832935
 Transform:
   m_ObjectHideFlags: 0
@@ -1593,6 +1595,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 667076815756900697, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
   m_PrefabInstance: {fileID: 389598061859244463}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &1687858913 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6118723575808211353, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
+  m_PrefabInstance: {fileID: 389598061859244463}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1714591992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1919,6 +1926,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 90043799}
     m_Modifications:
+    - target: {fileID: 773081045321788745, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1687858913}
     - target: {fileID: 2414160604571503060, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
       propertyPath: m_Name
       value: Female-Z001
@@ -1961,6 +1972,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3935226974346599192, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6118723575808211353, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: fdc9bf1694452e846912f20353b49b62, type: 2}
+    - target: {fileID: 6118723575808211353, guid: b098197eb1673d248b8b3b17c3017cbc, type: 3}
+      propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

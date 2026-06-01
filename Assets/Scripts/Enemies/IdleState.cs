@@ -8,7 +8,8 @@ public class IdleState : EnemyStateBase
     {
         _timer = 0f;
         sm.Agent.isStopped = true;
-        // sm.Animator?.SetTrigger("Idle"); // Descomenta si usas Animator
+        sm.animator?.CrossFade("ZombieFemale_Idle01",0.1f);
+        Debug.Log("Idle Set");
     }
 
     public override void Update(EnemyStateMachine sm, float dt)
@@ -20,5 +21,8 @@ public class IdleState : EnemyStateBase
         if (_timer >= sm.Config.idleDuration) Transition(sm, EnemyState.WalkRandom);
     }
 
-    public override void Exit(EnemyStateMachine sm) { }
+    public override void Exit(EnemyStateMachine sm) 
+    {
+        Debug.Log("Salio del modo Idle");
+     }
 }

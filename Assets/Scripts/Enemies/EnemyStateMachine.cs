@@ -11,6 +11,7 @@ public class EnemyStateMachine : MonoBehaviour
     public NavMeshAgent Agent { get; private set; }
     public Transform Player { get; set; }
     public bool IsDetected { get; set; } // ← setter público: lo escribe EnemyManager
+    public Animator animator;
 
     private readonly Dictionary<EnemyState, IEnemyState> _states = new();
     private bool _isInitialized;
@@ -31,7 +32,7 @@ public class EnemyStateMachine : MonoBehaviour
 
         Config = enemyComp.Config;
         RegisterStates();
-        Agent.speed        = Config.moveSpeed;
+        Agent.speed = Config.moveSpeed;
         Agent.acceleration = 20f;
         Agent.angularSpeed = 200f;
     }
@@ -84,10 +85,10 @@ public class EnemyStateMachine : MonoBehaviour
     // ─── Estado ───────────────────────────────────────────────────────────────
     private void RegisterStates()
     {
-        _states[EnemyState.Idle]       = new IdleState();
+        _states[EnemyState.Idle] = new IdleState();
         _states[EnemyState.WalkRandom] = new WalkRandomState();
-        _states[EnemyState.Chase]      = new ChaseState();
-        _states[EnemyState.Attack]     = new AttackState();
+        _states[EnemyState.Chase] = new ChaseState();
+        _states[EnemyState.Attack] = new AttackState();
     }
 
     public void ChangeState(EnemyState newState)
@@ -109,7 +110,17 @@ public class EnemyStateMachine : MonoBehaviour
     public void SetDestinationSafe(Vector3 target)
     {
         if (!Agent.isOnNavMesh) return;
-        if (NavMesh.SamplePosition(target, out var hit, 1f, NavMesh.AllAreas))
-            Agent.SetDestination(hit.position);
+
+        // Radio progresivo: intenta 2f, luego 5f
+        float[] radii = { 2f, 5f };
+        foreach (float radius in radii)
+        {
+            if (NavMesh.SamplePosition(target, out var hit, radius, NavMesh.AllAreas))
+            {
+                Agent.SetDestination(hit.position);
+                return;
+            }
+        }
+        Debug.LogWarning($"[{name}] SetDestinationSafe: no se encontró punto navegable cerca de {target}");
     }
 }
