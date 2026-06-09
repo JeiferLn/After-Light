@@ -44,7 +44,7 @@ public class ItemDatabase : MonoBehaviour
 
             itemLookup.Add(item.itemID, item);
 
-            Debug.Log($"Registered Item: {item.itemID}");
+            // Debug.Log($"Registered Item: {item.itemID}");
         }
 
         Debug.Log($"ItemDatabase Loaded: {itemLookup.Count} items");
