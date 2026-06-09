@@ -1096,11 +1096,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlashlightLight
   flashlightLight: {fileID: 1756991084}
   normalIntensity: 250
-  strongIntensity: 500
+  strongIntensity: 1000
   normalInnerSpotAngle: 40
-  strongInnerSpotAngle: 150
+  strongInnerSpotAngle: 10
   normalOuterSpotAngle: 80
-  strongOuterSpotAngle: 179
+  strongOuterSpotAngle: 15
+  outerLight: {fileID: 715548829}
+  normalOuterLightIntensity: 40
+  strongOuterLightIntensity: 500
+  normalOuterInnerSpotAngle: 70
+  strongOuterInnerSpotAngle: 20
+  normalOuterOuterSpotAngle: 135
+  strongOuterOuterSpotAngle: 40
   lightLerpSpeed: 10
 --- !u!114 &986736142
 MonoBehaviour:
@@ -2179,10 +2186,10 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 0.9742975, b: 0.8726415, a: 1}
-  m_Intensity: 250
+  m_Intensity: 500
   m_Range: 50
-  m_SpotAngle: 120
-  m_InnerSpotAngle: 80
+  m_SpotAngle: 179
+  m_InnerSpotAngle: 150
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
     m_Type: 2
