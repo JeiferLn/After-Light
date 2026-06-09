@@ -13,40 +13,53 @@ public class FlashlightLight : MonoBehaviour
     [SerializeField] private Light flashlightLight;
 
     [Header("Intensities & Angles")]
-    [SerializeField] private float normalIntensity = 1f;
-    [SerializeField] private float strongIntensity = 2f;
+    [SerializeField] private float normalIntensity = 15f;
+    [SerializeField] private float strongIntensity = 25f;
+
     [SerializeField] private float normalInnerSpotAngle = 15f;
     [SerializeField] private float strongInnerSpotAngle = 20f;
-    [SerializeField] private float normalOuterSpotAngle = 60f;
-    [SerializeField] private float strongOuterSpotAngle = 70f;
+
+    [SerializeField] private float normalOuterSpotAngle = 35f;
+    [SerializeField] private float strongOuterSpotAngle = 45f;
 
     [Header("Smoothing")]
-    [SerializeField][Range(1f, 25f)] private float lightLerpSpeed = 10f;
+    [SerializeField, Range(1f, 25f)]
+    private float lightLerpSpeed = 10f;
 
     private Mode currentMode = Mode.Off;
+
     private float targetIntensity;
     private float targetInnerSpotAngle;
     private float targetOuterSpotAngle;
 
     void Awake()
     {
-        ApplyMode(currentMode, snap: true);
+        ApplyMode(currentMode, true);
     }
 
     void LateUpdate()
     {
-        if (flashlightLight == null) return;
+        if (flashlightLight == null)
+            return;
 
         float t = Mathf.Clamp01(lightLerpSpeed * Time.deltaTime);
-        flashlightLight.intensity = Mathf.Lerp(flashlightLight.intensity, targetIntensity, t);
-        flashlightLight.innerSpotAngle = Mathf.Lerp(flashlightLight.innerSpotAngle, targetInnerSpotAngle, t);
-        flashlightLight.spotAngle = Mathf.Lerp(flashlightLight.spotAngle, targetOuterSpotAngle, t);
+
+        flashlightLight.intensity =
+            Mathf.Lerp(flashlightLight.intensity, targetIntensity, t);
+
+        flashlightLight.innerSpotAngle =
+            Mathf.Lerp(flashlightLight.innerSpotAngle, targetInnerSpotAngle, t);
+
+        flashlightLight.spotAngle =
+            Mathf.Lerp(flashlightLight.spotAngle, targetOuterSpotAngle, t);
     }
 
     public void SetMode(Mode mode)
     {
-        if (currentMode == mode) return;
-        ApplyMode(mode, snap: false);
+        if (currentMode == mode)
+            return;
+
+        ApplyMode(mode, false);
     }
 
     private void ApplyMode(Mode mode, bool snap)
@@ -60,11 +73,13 @@ public class FlashlightLight : MonoBehaviour
                 targetInnerSpotAngle = normalInnerSpotAngle;
                 targetOuterSpotAngle = normalOuterSpotAngle;
                 break;
+
             case Mode.Normal:
                 targetIntensity = normalIntensity;
                 targetInnerSpotAngle = normalInnerSpotAngle;
                 targetOuterSpotAngle = normalOuterSpotAngle;
                 break;
+
             case Mode.Strong:
                 targetIntensity = strongIntensity;
                 targetInnerSpotAngle = strongInnerSpotAngle;
