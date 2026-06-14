@@ -55,13 +55,45 @@ public class EnemyManager : MonoBehaviour
             ? GameManager.Instance.PlayerTransform.position
             : GameManager.Instance.PlayerPosition;
 
+        // Altura aproximada del jugador (pecho/cabeza) para que el raycast no roce el suelo
+        Vector3 playerEyePos = playerPos + Vector3.up * 1.5f;
+
         foreach (var sm in enemies)
         {
             if (sm == null || sm.Config == null) continue;
 
-            float detRadSqr = sm.Config.detectionRadius * sm.Config.detectionRadius;
+            // 1️⃣ Distancia (barato, filtro inicial)
             float distSqr = (sm.transform.position - playerPos).sqrMagnitude;
-            sm.IsDetected = distSqr <= detRadSqr;
+            float detRadSqr = sm.Config.detectionRadius * sm.Config.detectionRadius;
+
+            if (distSqr > detRadSqr)
+            {
+                sm.IsDetected = false;
+                continue;
+            }
+
+            // 2️⃣ Field of View (opcional pero recomendado)
+            Vector3 dirToPlayer = (playerPos - sm.transform.position);
+            dirToPlayer.y = 0f; // Ignorar desnivel para el ángulo
+            if (dirToPlayer.sqrMagnitude > 0.01f &&
+                Vector3.Angle(sm.transform.forward, dirToPlayer) > sm.Config.detectionAngle * 0.5f)
+            {
+                sm.IsDetected = false;
+                continue;
+            }
+
+            // 3️⃣ Line of Sight (Raycast contra obstáculos)
+            Vector3 enemyEyePos = sm.transform.position + Vector3.up * sm.Config.eyeHeightOffset;
+            Vector3 rayDir = playerEyePos - enemyEyePos;
+            float rayDist = rayDir.magnitude;
+
+            // Debug visual (descomentar solo en editor para depurar)
+            // Debug.DrawLine(enemyEyePos, playerEyePos, sm.IsDetected ? Color.green : Color.red, 0.1f);
+
+            // Retorna TRUE si GOLPEA un obstáculo en el LayerMask
+            bool hitsObstacle = Physics.Raycast(enemyEyePos, rayDir.normalized, rayDist, sm.Config.obstacleLayer);
+
+            sm.IsDetected = !hitsObstacle;
         }
     }
 

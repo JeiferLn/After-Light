@@ -7,7 +7,19 @@ public class EnemyConfig : ScriptableObject
     public float idleDuration = 2f;
     public float walkDuration = 3f;
     public float walkRadius = 8f;
-    public float moveSpeed = 3.5f;
+    public float moveSpeedWalk = 0.5f;
+    public float moveSpeedChase = 3.5f;
+
+    [Header("Vision / Detection")]
+    [Tooltip("Layer para paredes/obstáculos que bloquean la visión")]
+    public LayerMask obstacleLayer;
+
+    [Tooltip("Ángulo de visión en grados (180 = mitad delantera, 360 = 360°)")]
+    [Range(30f, 360f)]
+    public float detectionAngle = 120f;
+
+    [Tooltip("Altura del 'ojo' del enemigo para el raycast")]
+    public float eyeHeightOffset = 1.2f;
 
     [Header("Movement Tactics")]
     [Tooltip("Radio alrededor del jugador para flanquear (evitar fila india). 0 = línea recta.")]

@@ -15,7 +15,8 @@ MonoBehaviour:
   idleDuration: 2
   walkDuration: 3
   walkRadius: 5
-  moveSpeed: 2
+  moveSpeedWalk: 0.25
+  moveSpeedChase: 3.5
   flankRadius: 1
   flockRadius: 3.5
   separationWeight: 2.5

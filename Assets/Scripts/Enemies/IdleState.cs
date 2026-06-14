@@ -21,8 +21,8 @@ public class IdleState : EnemyStateBase
         if (_timer >= sm.Config.idleDuration) Transition(sm, EnemyState.WalkRandom);
     }
 
-    public override void Exit(EnemyStateMachine sm) 
+    public override void Exit(EnemyStateMachine sm)
     {
         Debug.Log("Salio del modo Idle");
-     }
+    }
 }

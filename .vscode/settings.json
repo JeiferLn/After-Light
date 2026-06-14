@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "AfterLight.sln"
+    "dotnet.defaultSolution": "After-Light.sln"
 }

@@ -23,9 +23,11 @@ public class ChaseState : EnemyStateBase
         sm.Agent.avoidancePriority = Random.Range(20, 90);
         sm.Agent.autoBraking = false;
         sm.Agent.isStopped = false;
-        sm.Agent.speed = sm.Config.moveSpeed * 1.2f;
+        sm.Agent.speed = sm.Config.moveSpeedChase;
 
         UpdateDestination(sm);
+
+        sm.animator.CrossFade("ZombieFemale_Run01Forward", 0.1f);
     }
 
     public override void Update(EnemyStateMachine sm, float dt)

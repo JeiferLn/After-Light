@@ -32,7 +32,7 @@ public class EnemyStateMachine : MonoBehaviour
 
         Config = enemyComp.Config;
         RegisterStates();
-        Agent.speed = Config.moveSpeed;
+        Agent.speed = Config.moveSpeedWalk;
         Agent.acceleration = 20f;
         Agent.angularSpeed = 200f;
     }

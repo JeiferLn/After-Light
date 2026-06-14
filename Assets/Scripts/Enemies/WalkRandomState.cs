@@ -21,9 +21,10 @@ public class WalkRandomState : EnemyStateBase
         _targetChangeInterval = GetRandomInterval(sm);
 
         sm.Agent.isStopped = false;
-        sm.Agent.speed = sm.Config.moveSpeed;
+        sm.Agent.speed = sm.Config.moveSpeedWalk;
 
-        sm.animator?.CrossFade("ZombieFemale_Walk01Forward", 0.1f);
+
+        sm.animator.CrossFade("ZombieFemale_Walk01Forward", 0.1f);
 
         SetNewRandomTarget(sm);
     }
